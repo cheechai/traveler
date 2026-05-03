@@ -1,0 +1,113 @@
+<%- include('../partials/header', { pageTitle: 'Edit ' + trip.title }) %>
+
+<div style="max-width: 640px; margin: 0 auto">
+  <div
+    style="
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    "
+  >
+    <a href="/trips/<%= trip.id %>" class="btn-ghost">← Back</a>
+    <h1
+      style="
+        font-family: 'Pacifico', cursive;
+        font-size: 2rem;
+        color: #283044;
+        margin: 0;
+      "
+    >
+      Edit Trip ✏️
+    </h1>
+  </div>
+
+  <div
+    style="
+      background: #ffffff;
+      border: 1.5px solid #bfa89e;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(40, 48, 68, 0.1);
+      padding: 1.6rem;
+      position: relative;
+      margin-bottom: 1.5rem;
+    "
+  >
+    <div
+      style="
+        position: absolute;
+        top: -10px;
+        left: 40%;
+        transform: translateX(-50%) rotate(-1deg);
+        width: 60px;
+        height: 18px;
+        background: rgba(191, 168, 158, 0.4);
+        border-radius: 3px;
+      "
+    ></div>
+    <% if (error) { %>
+    <div
+      style="
+        background: #fde8e8;
+        border: 1.5px solid #c97d7d;
+        border-radius: 8px;
+        padding: 0.5rem 0.8rem;
+        margin-bottom: 1rem;
+        font-size: 0.875rem;
+        color: #7a2020;
+      "
+    >
+      ❌ <%= error %>
+    </div>
+    <% } %>
+    <form action="/trips/<%= trip.id %>" method="POST">
+      <%- include('../partials/trip-form', { trip }) %>
+      <div style="display: flex; gap: 0.5rem; margin-top: 1.2rem">
+        <button type="submit" class="btn-primary">Save Changes</button>
+        <a href="/trips/<%= trip.id %>" class="btn-ghost">Cancel</a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Danger zone -->
+  <div
+    style="
+      background: #fff5f5;
+      border: 1.5px solid #e8b4b4;
+      border-radius: 12px;
+      padding: 1.1rem 1.3rem;
+      position: relative;
+    "
+  >
+    <div
+      style="
+        position: absolute;
+        top: -10px;
+        left: 14px;
+        background: #c97d7d;
+        color: #ffffff;
+        font-size: 0.78rem;
+        font-weight: 600;
+        padding: 0.15rem 0.7rem;
+        border-radius: 4px;
+        transform: rotate(-0.8deg);
+        letter-spacing: 0.02em;
+      "
+    >
+      ⚠️ Danger Zone
+    </div>
+    <p style="font-size: 0.875rem; color: #8b786d; margin: 0.5rem 0 0.8rem">
+      Permanently deletes this trip, all days, items, and expenses.
+    </p>
+    <form
+      action="/trips/<%= trip.id %>/delete"
+      method="POST"
+      onsubmit="return confirm('Delete this trip and all its data? This cannot be undone.')"
+    >
+      <button type="submit" class="btn-danger">Delete Trip</button>
+    </form>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

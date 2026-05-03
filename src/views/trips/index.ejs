@@ -1,0 +1,202 @@
+<%- include('../partials/header', { pageTitle: 'My Trips' }) %>
+
+<div
+  style="
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  "
+>
+  <div>
+    <h1
+      style="
+        font-family: 'Pacifico', cursive;
+        font-size: 2.4rem;
+        color: #283044;
+        margin: 0;
+        line-height: 1.1;
+      "
+    >
+      My Adventures
+    </h1>
+    <p style="font-size: 0.95rem; color: #8b786d; margin: 0.3rem 0 0">
+      Where will you go next?
+    </p>
+    <svg
+      width="200"
+      height="8"
+      viewBox="0 0 200 8"
+      style="display: block; margin-top: 5px"
+    >
+      <path
+        d="M0 5 Q25 1 50 5 Q75 9 100 5 Q125 1 150 5 Q175 9 200 5"
+        stroke="#78A1BB"
+        stroke-width="2.5"
+        fill="none"
+        stroke-linecap="round"
+      />
+    </svg>
+  </div>
+  <a href="/trips/new" class="btn-primary">✏️ New Trip</a>
+</div>
+
+<% if (trips.length === 0) { %>
+<div style="max-width: 360px; margin: 3rem auto; position: relative">
+  <!-- pin -->
+  <div
+    style="
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 16px;
+      height: 16px;
+      background: #78a1bb;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(40, 48, 68, 0.3);
+      z-index: 2;
+    "
+  ></div>
+  <div
+    style="
+      background: #ffffff;
+      border: 1.5px solid #bfa89e;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(40, 48, 68, 0.1);
+      padding: 2.5rem;
+      text-align: center;
+      transform: rotate(-1deg);
+    "
+  >
+    <div style="font-size: 3.5rem; margin-bottom: 0.8rem">🧳</div>
+    <h2
+      style="
+        font-family: 'Pacifico', cursive;
+        font-size: 1.6rem;
+        color: #8b786d;
+        margin: 0 0 0.5rem;
+      "
+    >
+      No trips yet!
+    </h2>
+    <p style="font-size: 0.9rem; color: #bfa89e; margin: 0 0 1.2rem">
+      Time to plan your first adventure together ✨
+    </p>
+    <a href="/trips/new" class="btn-primary">Plan a Trip ✈️</a>
+  </div>
+</div>
+
+<% } else { %>
+<div
+  style="
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 2rem 1.5rem;
+  "
+>
+  <% trips.forEach((trip, i) => { const rotations =
+  ['-1.8deg','1.2deg','-0.8deg','2deg','-1.4deg','0.9deg']; const rot =
+  rotations[i % rotations.length]; const pinColors =
+  ['#78A1BB','#BFA89E','#8B786D','#78A1BB','#283044','#BFA89E']; const pin =
+  pinColors[i % pinColors.length]; %>
+  <a
+    href="/trips/<%= trip.id %>"
+    style="
+      display: block;
+      text-decoration: none;
+      position: relative;
+      padding-top: 12px;
+    "
+  >
+    <!-- pushpin -->
+    <div
+      style="
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 16px;
+        height: 16px;
+        background: <%= pin %>;
+        border-radius: 50%;
+        box-shadow: 0 2px 5px rgba(40, 48, 68, 0.35);
+        z-index: 2;
+      "
+    ></div>
+    <!-- card -->
+    <div
+      style="
+        background-color: <%= trip.cover_color %>;
+        border: 1.5px solid #bfa89e;
+        border-radius: 12px;
+        box-shadow: 0 4px 14px rgba(40, 48, 68, 0.1);
+        overflow: hidden;
+        transform: rotate(<%= rot %>);
+        transition: transform 0.2s, box-shadow 0.2s;
+      "
+      onmouseover="this.style.transform='rotate(0deg) translateY(-4px)'; this.style.boxShadow='0 8px 24px rgba(40,48,68,0.18)';"
+      onmouseout="this.style.transform='rotate(<%= rot %>)'; this.style.boxShadow='0 4px 14px rgba(40,48,68,0.1)';"
+    >
+      <div style="padding: 1.1rem 1.1rem 0.7rem">
+        <div style="font-size: 2.8rem; margin-bottom: 0.4rem; line-height: 1">
+          <%= trip.cover_emoji %>
+        </div>
+        <h2
+          style="
+            font-family: 'Pacifico', cursive;
+            font-size: 1.2rem;
+            color: #283044;
+            margin: 0 0 0.2rem;
+            line-height: 1.2;
+          "
+        >
+          <%= trip.title %>
+        </h2>
+        <p
+          style="
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #283044;
+            margin: 0 0 0.5rem;
+            opacity: 0.75;
+          "
+        >
+          📍 <%= trip.destination %>
+        </p>
+        <p style="font-size: 0.82rem; color: #283044; margin: 0; opacity: 0.65">
+          📅 <%= trip.start_date %> → <%= trip.end_date %>
+        </p>
+        <% if (trip.budget > 0) { %>
+        <p
+          style="
+            font-size: 0.82rem;
+            color: #283044;
+            margin: 0.15rem 0 0;
+            opacity: 0.65;
+          "
+        >
+          💰 <%= trip.currency %> <%= trip.budget.toLocaleString() %>
+        </p>
+        <% } %>
+      </div>
+      <div
+        style="
+          background: rgba(40, 48, 68, 0.06);
+          padding: 0.3rem 1rem;
+          font-size: 0.8rem;
+          color: #283044;
+          font-weight: 500;
+          opacity: 0.7;
+          border-top: 1px solid rgba(40, 48, 68, 0.08);
+        "
+      >
+        Open →
+      </div>
+    </div>
+  </a>
+  <% }) %>
+</div>
+<% } %> <%- include('../partials/footer') %>

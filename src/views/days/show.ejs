@@ -1,0 +1,923 @@
+<%- include('../partials/header', { pageTitle: trip.title + ' — Day ' +
+day.day_number }) %>
+
+<!-- Breadcrumb -->
+<div
+  style="
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    flex-wrap: wrap;
+    color: #8b786d;
+  "
+>
+  <a href="/trips" style="color: #78a1bb; text-decoration: none">My Trips</a>
+  <span>›</span>
+  <a href="/trips/<%= trip.id %>" style="color: #78a1bb; text-decoration: none"
+    ><%= trip.title %></a
+  >
+  <span>›</span>
+  <span style="color: #283044; font-weight: 600"
+    >Day <%= day.day_number %></span
+  >
+</div>
+
+<!-- Day header -->
+<% const washiColors =
+['#78A1BB','#BFA89E','#8B786D','#5d8aa8','#a08880','#6b87a0','#94837a'] %> <%
+const wc = washiColors[(day.day_number - 1) % 7] %>
+<div
+  style="
+    position: relative;
+    background-color: <%= trip.cover_color %>;
+    border: 1.5px solid #bfa89e;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(40, 48, 68, 0.1);
+    padding: 1.2rem 1.4rem 1rem;
+    margin-bottom: 1.8rem;
+    overflow: visible;
+  "
+>
+  <div
+    style="
+      position: absolute;
+      top: -11px;
+      left: 18px;
+      background: <%= wc %>;
+      color: #ffffff;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.15rem 0.9rem;
+      border-radius: 4px;
+      transform: rotate(-1.2deg);
+      letter-spacing: 0.02em;
+    "
+  >
+    Day <%= day.day_number %>
+  </div>
+  <div
+    style="
+      position: absolute;
+      top: -10px;
+      right: 36px;
+      width: 58px;
+      height: 17px;
+      background: rgba(191, 168, 158, 0.4);
+      border-radius: 3px;
+      transform: rotate(1.2deg);
+    "
+  ></div>
+
+  <div
+    style="
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-top: 0.5rem;
+    "
+  >
+    <div>
+      <p
+        style="font-size: 0.95rem; font-weight: 600; color: #283044; margin: 0"
+      >
+        📅 <%= formatDate(day.date) %>
+      </p>
+      <% if (day.title) { %>
+      <h1
+        style="
+          font-family: 'Pacifico', cursive;
+          font-size: 1.9rem;
+          color: #283044;
+          margin: 0.2rem 0 0;
+          line-height: 1.1;
+        "
+      >
+        <%= day.title %>
+      </h1>
+      <% } %> <% if (day.notes) { %>
+      <p
+        style="
+          font-size: 0.875rem;
+          color: #283044;
+          opacity: 0.7;
+          margin: 0.3rem 0 0;
+        "
+      >
+        <%= day.notes %>
+      </p>
+      <% } %>
+    </div>
+    <div style="display: flex; gap: 0.4rem; flex-wrap: wrap">
+      <a
+        href="/trips/<%= trip.id %>/days/<%= day.id %>/edit"
+        class="btn-ghost"
+        style="font-size: 0.82rem"
+        >Edit Day</a
+      >
+      <form
+        action="/trips/<%= trip.id %>/days/<%= day.id %>/delete"
+        method="POST"
+        onsubmit="return confirm('Delete this day and all its items?')"
+        style="display: inline"
+      >
+        <button
+          type="submit"
+          class="btn-ghost"
+          style="font-size: 0.82rem; color: #c97d7d"
+        >
+          Delete
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Day navigator pills -->
+  <div style="display: flex; gap: 0.35rem; flex-wrap: wrap; margin-top: 0.9rem">
+    <% days.forEach(d => { %>
+    <a
+      href="/trips/<%= trip.id %>/days/<%= d.id %>"
+      style="font-size:0.78rem; font-weight:600; padding:0.2rem 0.6rem; border-radius:20px; border:1.5px solid <%= d.id === day.id ? '#283044' : '#BFA89E' %>; text-decoration:none; background:<%= d.id === day.id ? '#283044' : 'rgba(255,255,255,0.6)' %>; color:<%= d.id === day.id ? '#EBF5EE' : '#283044' %>; transition:all 0.15s;"
+    >
+      D<%= d.day_number %>
+    </a>
+    <% }) %>
+  </div>
+</div>
+
+<!-- Timeline heading + add button -->
+<div
+  style="
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  "
+>
+  <h2
+    style="
+      font-family: 'Pacifico', cursive;
+      font-size: 1.6rem;
+      color: #283044;
+      margin: 0;
+    "
+  >
+    Timeline
+  </h2>
+  <button onclick="toggleAddItem()" class="btn-primary">+ Add Item</button>
+</div>
+
+<!-- Add item form (hidden) -->
+<div
+  id="add-item-form"
+  style="
+    display: none;
+    background: #ffffff;
+    border: 1.5px solid #78a1bb;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(40, 48, 68, 0.1);
+    padding: 1.2rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+  "
+>
+  <div
+    style="
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%) rotate(1deg);
+      width: 65px;
+      height: 17px;
+      background: rgba(120, 161, 187, 0.4);
+      border-radius: 3px;
+    "
+  ></div>
+  <h3
+    style="
+      font-family: 'Pacifico', cursive;
+      font-size: 1.2rem;
+      color: #283044;
+      margin: 0 0 0.9rem;
+    "
+  >
+    New Item ✨
+  </h3>
+  <form action="/days/<%= day.id %>/items" method="POST">
+    <div style="margin-bottom: 0.8rem">
+      <label
+        style="
+          display: block;
+          font-size: 0.82rem;
+          font-weight: 600;
+          color: #283044;
+          margin-bottom: 0.35rem;
+        "
+        >Type</label
+      >
+      <div
+        style="display: flex; gap: 0.4rem; flex-wrap: wrap"
+        id="type-selector"
+      >
+        <%
+        [['food','🍽️','Food'],['activity','⭐','Activity'],['transport','🚗','Transport'],['accommodation','🏨','Stay'],['other','📌','Other']].forEach(([val,
+        icon, label]) => { %>
+        <label style="cursor: pointer">
+          <input type="radio" name="type" value="<%= val %>"
+          style="position:absolute;opacity:0;width:0;height:0;" <%= val ===
+          'activity' ? 'checked' : '' %> />
+          <span
+            class="type-btn"
+            data-value="<%= val %>"
+            style="
+              display: inline-flex;
+              align-items: center;
+              gap: 0.25rem;
+              padding: 0.3rem 0.75rem;
+              border-radius: 20px;
+              border: 1.5px solid #bfa89e;
+              font-size: 0.85rem;
+              font-weight: 500;
+              cursor: pointer;
+              transition: all 0.12s;
+              background: #ebf5ee;
+              color: #283044;
+            "
+          >
+            <%= icon %> <%= label %>
+          </span>
+        </label>
+        <% }) %>
+      </div>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem">
+      <div style="grid-column: 1/-1">
+        <label
+          style="
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #283044;
+            margin-bottom: 0.3rem;
+          "
+          >Title *</label
+        >
+        <input
+          type="text"
+          name="title"
+          class="input-field"
+          placeholder="e.g. Ramen at Ichiran 🍜"
+          required
+        />
+      </div>
+      <div>
+        <label
+          style="
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #283044;
+            margin-bottom: 0.3rem;
+          "
+          >Start time</label
+        >
+        <input type="time" name="start_time" class="input-field" />
+      </div>
+      <div>
+        <label
+          style="
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #283044;
+            margin-bottom: 0.3rem;
+          "
+          >End time</label
+        >
+        <input type="time" name="end_time" class="input-field" />
+      </div>
+      <div style="grid-column: 1/-1">
+        <label
+          style="
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #283044;
+            margin-bottom: 0.3rem;
+          "
+          >Location name</label
+        >
+        <div style="display: flex; gap: 0.4rem">
+          <input
+            type="text"
+            name="location_name"
+            id="new-location-name"
+            class="input-field"
+            placeholder="e.g. Ichiran Shinjuku"
+          />
+          <button
+            type="button"
+            onclick="buildMapsUrl('new')"
+            class="btn-ghost"
+            style="white-space: nowrap; font-size: 0.82rem"
+          >
+            📍 Build
+          </button>
+        </div>
+      </div>
+      <div style="grid-column: 1/-1">
+        <label
+          style="
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #283044;
+            margin-bottom: 0.3rem;
+          "
+          >Google Maps URL</label
+        >
+        <input
+          type="url"
+          name="maps_url"
+          id="new-maps-url"
+          class="input-field"
+          placeholder="Auto-filled or paste manually"
+        />
+      </div>
+      <div style="grid-column: 1/-1">
+        <label
+          style="
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #283044;
+            margin-bottom: 0.3rem;
+          "
+          >Website / booking link</label
+        >
+        <input
+          type="url"
+          name="link"
+          class="input-field"
+          placeholder="https://…"
+        />
+      </div>
+      <div style="grid-column: 1/-1">
+        <label
+          style="
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #283044;
+            margin-bottom: 0.3rem;
+          "
+          >Notes</label
+        >
+        <textarea
+          name="notes"
+          class="input-field"
+          rows="2"
+          placeholder="Any details to remember…"
+        ></textarea>
+      </div>
+    </div>
+    <div style="display: flex; gap: 0.5rem; margin-top: 0.9rem">
+      <button type="submit" class="btn-primary">Add to Timeline</button>
+      <button type="button" onclick="toggleAddItem()" class="btn-ghost">
+        Cancel
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- Empty state -->
+<% if (items.length === 0) { %>
+<div
+  style="
+    background: #ffffff;
+    border: 1.5px solid #bfa89e;
+    border-radius: 12px;
+    padding: 2.5rem;
+    text-align: center;
+  "
+>
+  <div style="font-size: 2.8rem; margin-bottom: 0.5rem"></div>
+  <p style="font-size: 0.9rem; color: #8b786d">
+    Nothing planned yet — add your first item above!
+  </p>
+</div>
+<% } else { %>
+
+<div id="sortable-items">
+  <% const typeBg = { food:'#fdf6ee', activity:'#eef4fb', transport:'#f4f0fb',
+  accommodation:'#eef7f2', other:'#f7f5f3' } %> <% const typeAccent = {
+  food:'#f0c080', activity:'#78A1BB', transport:'#a090c8',
+  accommodation:'#78b896', other:'#BFA89E' } %> <% const typeIcons = {
+  food:'🍽️', activity:'⭐', transport:'🚗', accommodation:'🏨', other:'📌' } %>
+  <% items.forEach((item, idx) => { %>
+  <div class="item-card" data-id="<%= item.id %>" style="margin-bottom: 0.2rem">
+    <div
+      style="
+        background: <%= typeBg[item.type] || '#f7f5f3' %>;
+        border: 1.5px solid #bfa89e;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(40, 48, 68, 0.07);
+        padding: 0.9rem 1rem;
+        position: relative;
+        transition: box-shadow 0.15s, transform 0.15s;
+      "
+      onmouseover="this.style.boxShadow='0 6px 18px rgba(40,48,68,0.13)'; this.style.transform='translateY(-2px)';"
+      onmouseout="this.style.boxShadow='0 2px 8px rgba(40,48,68,0.07)'; this.style.transform='translateY(0)';"
+    >
+      <!-- coloured left accent -->
+      <div
+        style="
+          position: absolute;
+          left: 0;
+          top: 12px;
+          bottom: 12px;
+          width: 4px;
+          background: <%= typeAccent[item.type] || '#BFA89E' %>;
+          border-radius: 0 4px 4px 0;
+          opacity: 0.7;
+        "
+      ></div>
+
+      <!-- tape strip -->
+      <div
+        style="
+          position: absolute;
+          top: -9px;
+          left: 16px;
+          width: 36px;
+          height: 15px;
+          background: rgba(120, 161, 187, 0.3);
+          border-radius: 3px;
+          transform: rotate(-1.5deg);
+        "
+      ></div>
+
+      <div
+        style="
+          display: flex;
+          align-items: flex-start;
+          gap: 0.7rem;
+          padding-left: 0.5rem;
+        "
+      >
+        <div
+          style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.2rem;
+            padding-top: 2px;
+            flex-shrink: 0;
+          "
+        >
+          <span
+            class="drag-handle"
+            title="Drag to reorder"
+            style="
+              cursor: grab;
+              font-size: 1rem;
+              color: #bfa89e;
+              user-select: none;
+              line-height: 1;
+            "
+            >⠿</span
+          >
+          <span style="font-size: 1.4rem; line-height: 1"
+            ><%= typeIcons[item.type] || '📌' %></span
+          >
+        </div>
+
+        <div style="flex: 1; min-width: 0">
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              flex-wrap: wrap;
+              gap: 0.4rem;
+              margin-bottom: 0.2rem;
+            "
+          >
+            <span style="font-size: 0.95rem; font-weight: 600; color: #283044"
+              ><%= item.title %></span
+            >
+            <% if (item.start_time) { %>
+            <span
+              style="
+                font-size: 0.78rem;
+                color: #8b786d;
+                background: rgba(40, 48, 68, 0.06);
+                border: 1px solid #bfa89e;
+                border-radius: 20px;
+                padding: 0 0.5rem;
+              "
+              >⏰ <%= item.start_time %><%= item.end_time ? ' – ' +
+              item.end_time : '' %></span
+            >
+            <% } %>
+            <span
+              style="
+                font-size: 0.75rem;
+                font-weight: 500;
+                padding: 0.1rem 0.5rem;
+                background: rgba(40, 48, 68, 0.06);
+                border: 1px solid #bfa89e;
+                border-radius: 20px;
+                color: #8b786d;
+                text-transform: capitalize;
+              "
+              ><%= item.type %></span
+            >
+          </div>
+          <% if (item.location_name) { %>
+          <p
+            style="
+              font-size: 0.85rem;
+              color: #8b786d;
+              margin: 0.1rem 0 0;
+              display: flex;
+              align-items: center;
+              gap: 0.3rem;
+              flex-wrap: wrap;
+            "
+          >
+            📍 <%= item.location_name %> <% if (item.maps_url) { %>
+            <a
+              href="<%= item.maps_url %>"
+              target="_blank"
+              rel="noopener"
+              style="
+                color: #78a1bb;
+                font-size: 0.8rem;
+                text-decoration: none;
+                font-weight: 500;
+              "
+              >Open in Maps ↗</a
+            >
+            <% } %>
+          </p>
+          <% } %> <% if (item.notes) { %>
+          <p
+            style="
+              font-size: 0.85rem;
+              color: #8b786d;
+              font-style: italic;
+              margin: 0.2rem 0 0;
+            "
+          >
+            <%= item.notes %>
+          </p>
+          <% } %> <% if (item.link) { %>
+          <a
+            href="<%= item.link %>"
+            target="_blank"
+            rel="noopener"
+            style="
+              font-size: 0.82rem;
+              color: #78a1bb;
+              text-decoration: none;
+              font-weight: 500;
+              margin-top: 0.2rem;
+              display: inline-block;
+            "
+            >🔗 Website / Booking ↗</a
+          >
+          <% } %>
+        </div>
+
+        <!-- edit / delete -->
+        <div
+          style="
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            opacity: 0;
+            transition: opacity 0.15s;
+            flex-shrink: 0;
+          "
+          class="item-actions"
+        >
+          <button
+            onclick="toggleEditItem(<%= item.id %>)"
+            title="Edit"
+            style="
+              padding: 0.3rem 0.45rem;
+              background: #ebf5ee;
+              border: 1px solid #bfa89e;
+              border-radius: 6px;
+              cursor: pointer;
+              font-size: 0.9rem;
+            "
+          >
+            ✏️
+          </button>
+          <form
+            action="/days/<%= day.id %>/items/<%= item.id %>/delete"
+            method="POST"
+            onsubmit="return confirm('Delete this item?')"
+            style="display: inline"
+          >
+            <button
+              type="submit"
+              title="Delete"
+              style="
+                padding: 0.3rem 0.45rem;
+                background: #fff5f5;
+                border: 1px solid #e8b4b4;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 0.9rem;
+              "
+            >
+              🗑️
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Inline edit form -->
+      <div
+        id="edit-item-<%= item.id %>"
+        style="
+          display: none;
+          margin-top: 0.9rem;
+          padding-top: 0.8rem;
+          border-top: 1px solid #e8e0d8;
+        "
+      >
+        <form action="/days/<%= day.id %>/items/<%= item.id %>" method="POST">
+          <div
+            style="
+              display: flex;
+              gap: 0.4rem;
+              flex-wrap: wrap;
+              margin-bottom: 0.6rem;
+            "
+            id="type-selector-<%= item.id %>"
+          >
+            <%
+            [['food','🍽️','Food'],['activity','⭐','Activity'],['transport','🚗','Transport'],['accommodation','🏨','Stay'],['other','📌','Other']].forEach(([val,
+            icon, lbl]) => { %>
+            <label style="cursor: pointer">
+              <input type="radio" name="type" value="<%= val %>"
+              style="position:absolute;opacity:0;width:0;height:0;" <%=
+              item.type === val ? 'checked' : '' %> />
+              <span
+                class="type-btn"
+                data-value="<%= val %>"
+                style="display:inline-flex; align-items:center; gap:0.25rem; padding:0.25rem 0.65rem; border-radius:20px; font-size:0.82rem; font-weight:500; cursor:pointer; transition:all 0.12s; border:1.5px solid <%= item.type === val ? '#283044' : '#BFA89E' %>; background:<%= item.type === val ? '#283044' : '#EBF5EE' %>; color:<%= item.type === val ? '#EBF5EE' : '#283044' %>;"
+              >
+                <%= icon %> <%= lbl %>
+              </span>
+            </label>
+            <% }) %>
+          </div>
+          <div
+            style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem"
+          >
+            <div style="grid-column: 1/-1">
+              <input
+                type="text"
+                name="title"
+                class="input-field"
+                value="<%= item.title %>"
+                required
+              />
+            </div>
+            <div>
+              <input
+                type="time"
+                name="start_time"
+                class="input-field"
+                value="<%= item.start_time || '' %>"
+              />
+            </div>
+            <div>
+              <input
+                type="time"
+                name="end_time"
+                class="input-field"
+                value="<%= item.end_time || '' %>"
+              />
+            </div>
+            <div style="grid-column: 1/-1">
+              <div style="display: flex; gap: 0.4rem">
+                <input
+                  type="text"
+                  name="location_name"
+                  id="edit-location-<%= item.id %>"
+                  class="input-field"
+                  value="<%= item.location_name || '' %>"
+                  placeholder="Location"
+                />
+                <button
+                  type="button"
+                  onclick="buildMapsUrl('<%= item.id %>')"
+                  class="btn-ghost"
+                  style="font-size: 0.8rem; white-space: nowrap"
+                >
+                  📍 Build
+                </button>
+              </div>
+            </div>
+            <div style="grid-column: 1/-1">
+              <input
+                type="url"
+                name="maps_url"
+                id="edit-maps-<%= item.id %>"
+                class="input-field"
+                value="<%= item.maps_url || '' %>"
+                placeholder="Google Maps URL"
+              />
+            </div>
+            <div style="grid-column: 1/-1">
+              <input
+                type="url"
+                name="link"
+                class="input-field"
+                value="<%= item.link || '' %>"
+                placeholder="Website / booking link"
+              />
+            </div>
+            <div style="grid-column: 1/-1">
+              <textarea name="notes" class="input-field" rows="2">
+<%= item.notes || '' %></textarea
+              >
+            </div>
+          </div>
+          <div style="display: flex; gap: 0.4rem; margin-top: 0.6rem">
+            <button
+              type="submit"
+              class="btn-primary"
+              style="font-size: 0.85rem"
+            >
+              Save
+            </button>
+            <button
+              type="button"
+              onclick="toggleEditItem(<%= item.id %>)"
+              class="btn-ghost"
+              style="font-size: 0.85rem"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Direction connector between items -->
+    <% if (idx < items.length - 1) { %> <% const nextItem = items[idx + 1] %>
+    <div
+      style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0.35rem 0;
+        gap: 0.4rem;
+      "
+    >
+      <div
+        style="
+          width: 1.5px;
+          height: 18px;
+          background: repeating-linear-gradient(
+            to bottom,
+            #bfa89e 0,
+            #bfa89e 4px,
+            transparent 4px,
+            transparent 7px
+          );
+        "
+      ></div>
+      <% if (item.location_name && nextItem.location_name) { %> <% const leg =
+      legsMap[item.id] %> <% const fromEnc =
+      encodeURIComponent(item.location_name) %> <% const toEnc =
+      encodeURIComponent(nextItem.location_name) %> <% const autoUrl =
+      `https://www.google.com/maps/dir/?api=1&origin=${fromEnc}&destination=${toEnc}&travelmode=${leg
+      ? leg.transport_mode : 'driving'}` %>
+      <a
+        href="<%= leg ? leg.maps_url : autoUrl %>"
+        target="_blank"
+        rel="noopener"
+        style="
+          display: inline-flex;
+          align-items: center;
+          gap: 0.3rem;
+          padding: 0.2rem 0.75rem;
+          background: #ebf5ee;
+          border: 1px solid #78a1bb;
+          border-radius: 20px;
+          font-size: 0.8rem;
+          font-weight: 500;
+          color: #78a1bb;
+          text-decoration: none;
+          transition: all 0.15s;
+        "
+        onmouseover="this.style.background='#78A1BB'; this.style.color='#ffffff';"
+        onmouseout="this.style.background='#EBF5EE'; this.style.color='#78A1BB';"
+      >
+        🗺️ Directions<% if (leg && leg.duration_min) { %> · <%= leg.duration_min
+        %> min<% } %> ↗
+      </a>
+      <% } else { %>
+      <div
+        style="width: 16px; height: 1.5px; background: #bfa89e; opacity: 0.5"
+      ></div>
+      <% } %>
+      <div
+        style="
+          width: 1.5px;
+          height: 18px;
+          background: repeating-linear-gradient(
+            to bottom,
+            #bfa89e 0,
+            #bfa89e 4px,
+            transparent 4px,
+            transparent 7px
+          );
+        "
+      ></div>
+    </div>
+    <% } %>
+  </div>
+  <% }) %>
+</div>
+
+<% } %>
+
+<script src="/js/maps-helper.js"></script>
+<script src="/js/sortable.js"></script>
+<script>
+  document.querySelectorAll(".item-card").forEach((card) => {
+    const actions = card.querySelector(".item-actions");
+    if (!actions) return;
+    card.addEventListener("mouseenter", () => (actions.style.opacity = "1"));
+    card.addEventListener("mouseleave", () => (actions.style.opacity = "0"));
+  });
+
+  function initTypeSelector(container) {
+    container.querySelectorAll(".type-btn").forEach((btn) => {
+      const radio = btn.previousElementSibling;
+      if (radio.checked) applySelected(btn);
+      btn.addEventListener("click", () => {
+        container
+          .querySelectorAll(".type-btn")
+          .forEach((b) => applyUnselected(b));
+        applySelected(btn);
+      });
+    });
+  }
+  function applySelected(btn) {
+    btn.style.border = "1.5px solid #283044";
+    btn.style.background = "#283044";
+    btn.style.color = "#EBF5EE";
+  }
+  function applyUnselected(btn) {
+    btn.style.border = "1.5px solid #BFA89E";
+    btn.style.background = "#EBF5EE";
+    btn.style.color = "#283044";
+  }
+  document.querySelectorAll('[id^="type-selector"]').forEach(initTypeSelector);
+  const newTs = document.getElementById("type-selector");
+  if (newTs) initTypeSelector(newTs);
+
+  function toggleAddItem() {
+    const el = document.getElementById("add-item-form");
+    el.style.display = el.style.display === "none" ? "block" : "none";
+    if (el.style.display !== "none")
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+  function toggleEditItem(id) {
+    const el = document.getElementById("edit-item-" + id);
+    el.style.display = el.style.display === "none" ? "block" : "none";
+  }
+
+  if (typeof Sortable !== "undefined") {
+    new Sortable(document.getElementById("sortable-items"), {
+      animation: 150,
+      handle: ".drag-handle",
+      onEnd() {
+        const ids = [...document.querySelectorAll(".item-card")].map(
+          (el) => el.dataset.id
+        );
+        fetch("/days/<%= day.id %>/items/reorder", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: "ids=" + encodeURIComponent(JSON.stringify(ids)),
+        });
+      },
+    });
+  }
+</script>
+
+<%- include('../partials/footer') %>

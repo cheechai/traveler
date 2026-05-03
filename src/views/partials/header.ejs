@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= typeof pageTitle !== 'undefined' ? pageTitle + ' — Traveler' : 'Traveler ✈️' %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/app.css" />
+</head>
+<body style="min-height:100vh; background-color:#EBF5EE; background-image:url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23BFA89E' fill-opacity='0.12'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\"); font-family:'Inter',sans-serif; color:#283044;">
+
+  <nav style="background-color:#283044; position:sticky; top:0; z-index:50; box-shadow:0 2px 12px rgba(40,48,68,0.25);">
+    <div style="max-width:960px; margin:0 auto; padding:0.65rem 1.2rem; display:flex; align-items:center; justify-content:space-between;">
+      <a href="/trips" style="font-family:'Pacifico',cursive; font-size:1.55rem; color:#EBF5EE; text-decoration:none; display:flex; align-items:center; gap:0.4rem; letter-spacing:0.01em;">
+        Traveler
+      </a>
+      <div style="display:flex; align-items:center; gap:0.5rem;">
+        <a href="/trips" style="font-family:'Inter',sans-serif; font-weight:500; font-size:0.875rem; color:#EBF5EE; background:rgba(235,245,238,0.12); padding:0.3rem 0.85rem; border-radius:8px; text-decoration:none; transition:background 0.15s;" onmouseover="this.style.background='rgba(235,245,238,0.22)'" onmouseout="this.style.background='rgba(235,245,238,0.12)'">My Trips</a>
+        <form action="/logout" method="POST" style="display:inline;">
+          <button type="submit" style="font-family:'Inter',sans-serif; font-weight:500; font-size:0.875rem; color:#EBF5EE; background:rgba(235,245,238,0.12); padding:0.3rem 0.85rem; border-radius:8px; border:none; cursor:pointer; transition:background 0.15s;" onmouseover="this.style.background='rgba(235,245,238,0.22)'" onmouseout="this.style.background='rgba(235,245,238,0.12)'">Logout</button>
+        </form>
+      </div>
+    </div>
+  </nav>
+
+  <% if (locals.success && locals.success.length) { %>
+    <div style="max-width:960px; margin:1rem auto 0; padding:0 1.2rem;" id="flash-success">
+      <div style="background:#d4edda; border:1.5px solid #78A1BB; border-radius:8px; padding:0.6rem 1rem; display:flex; align-items:center; justify-content:space-between; font-family:'Inter',sans-serif; font-size:0.9rem; color:#283044;">
+        <span>✅ <%= locals.success[0] %></span>
+        <button onclick="document.getElementById('flash-success').remove()" style="background:none;border:none;cursor:pointer;font-size:1.1rem;color:#8B786D;">×</button>
+      </div>
+    </div>
+  <% } %>
+  <% if (locals.error && locals.error.length) { %>
+    <div style="max-width:960px; margin:1rem auto 0; padding:0 1.2rem;" id="flash-error">
+      <div style="background:#fde8e8; border:1.5px solid #c97d7d; border-radius:8px; padding:0.6rem 1rem; display:flex; align-items:center; justify-content:space-between; font-family:'Inter',sans-serif; font-size:0.9rem; color:#283044;">
+        <span>❌ <%= locals.error[0] %></span>
+        <button onclick="document.getElementById('flash-error').remove()" style="background:none;border:none;cursor:pointer;font-size:1.1rem;color:#8B786D;">×</button>
+      </div>
+    </div>
+  <% } %>
+
+  <main style="max-width:960px; margin:0 auto; padding:2rem 1.2rem;">

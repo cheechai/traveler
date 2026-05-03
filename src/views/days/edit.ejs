@@ -1,0 +1,26 @@
+<%- include('../partials/header', { pageTitle: 'Edit Day ' + day.day_number }) %>
+
+<div style="max-width:500px; margin:0 auto;">
+  <div style="display:flex; align-items:center; gap:0.8rem; margin-bottom:1.5rem; flex-wrap:wrap;">
+    <a href="/trips/<%= trip.id %>/days/<%= day.id %>" class="btn-ghost">← Back</a>
+    <h1 style="font-family:'Pacifico',cursive; font-size:2rem; color:#283044; margin:0;">Edit Day <%= day.day_number %></h1>
+  </div>
+  <div style="background:#ffffff; border:1.5px solid #BFA89E; border-radius:12px; box-shadow:0 4px 14px rgba(40,48,68,0.09); padding:1.4rem;">
+    <form action="/trips/<%= trip.id %>/days/<%= day.id %>" method="POST" style="display:flex; flex-direction:column; gap:0.9rem;">
+      <div>
+        <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.35rem;">Day Title (optional)</label>
+        <input type="text" name="title" class="input-field" placeholder="e.g. Beach Day ☀️" value="<%= day.title || '' %>" />
+      </div>
+      <div>
+        <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.35rem;">Notes</label>
+        <textarea name="notes" class="input-field" rows="3" placeholder="Notes for this day…"><%= day.notes || '' %></textarea>
+      </div>
+      <div style="display:flex; gap:0.5rem;">
+        <button type="submit" class="btn-primary">Save</button>
+        <a href="/trips/<%= trip.id %>/days/<%= day.id %>" class="btn-ghost">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

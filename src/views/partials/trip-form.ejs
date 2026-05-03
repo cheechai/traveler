@@ -1,0 +1,68 @@
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:0.9rem;">
+  <div style="grid-column:1/-1;">
+    <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.35rem;">Trip Name *</label>
+    <input type="text" name="title" class="input-field" placeholder="e.g. Tokyo Spring 2025" value="<%= typeof trip !== 'undefined' ? trip.title : '' %>" required />
+  </div>
+  <div style="grid-column:1/-1;">
+    <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.35rem;">Destination *</label>
+    <input type="text" name="destination" class="input-field" placeholder="e.g. Tokyo, Japan" value="<%= typeof trip !== 'undefined' ? trip.destination : '' %>" required />
+  </div>
+  <div>
+    <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.35rem;">Start Date *</label>
+    <input type="date" name="start_date" class="input-field" value="<%= typeof trip !== 'undefined' ? trip.start_date : '' %>" required />
+  </div>
+  <div>
+    <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.35rem;">End Date *</label>
+    <input type="date" name="end_date" class="input-field" value="<%= typeof trip !== 'undefined' ? trip.end_date : '' %>" required />
+  </div>
+  <div>
+    <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.35rem;">Budget</label>
+    <input type="number" name="budget" class="input-field" placeholder="0" step="0.01" min="0" value="<%= typeof trip !== 'undefined' ? trip.budget : '' %>" />
+  </div>
+  <div>
+    <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.35rem;">Currency</label>
+    <select name="currency" class="input-field">
+      <% ['USD','EUR','GBP','JPY','SGD','MYR','AUD','THB','KRW','HKD'].forEach(c => { %>
+        <option value="<%= c %>" <%= (typeof trip !== 'undefined' && trip.currency === c) ? 'selected' : '' %>><%= c %></option>
+      <% }) %>
+    </select>
+  </div>
+  <div>
+    <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.35rem;">Cover Emoji</label>
+    <input type="text" name="cover_emoji" class="input-field" placeholder="✈️" value="<%= typeof trip !== 'undefined' ? trip.cover_emoji : '✈️' %>" />
+  </div>
+  <div>
+    <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.35rem;">Card Colour</label>
+    <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:0.25rem;">
+      <% const colours = ['#d4e8f0','#dce8d4','#e8dcd4','#d4dce8','#e8d4e0','#e8e4d4','#d4e8e4'] %>
+      <% colours.forEach(c => { %>
+        <label style="cursor:pointer;">
+          <input type="radio" name="cover_color" value="<%= c %>" style="position:absolute;opacity:0;width:0;height:0;" class="colour-radio" <%= (typeof trip !== 'undefined' && trip.cover_color === c) || (typeof trip === 'undefined' && c === '#d4e8f0') ? 'checked' : '' %> />
+          <span class="colour-swatch" data-colour="<%= c %>" style="display:block; width:28px; height:28px; border-radius:50%; background-color:<%= c %>; border:2px solid #BFA89E; cursor:pointer; transition:all 0.15s;"></span>
+        </label>
+      <% }) %>
+    </div>
+  </div>
+  <div style="grid-column:1/-1;">
+    <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.35rem;">Notes</label>
+    <textarea name="notes" class="input-field" rows="3" placeholder="Anything to remember…"><%= typeof trip !== 'undefined' ? trip.notes || '' : '' %></textarea>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.colour-swatch').forEach(el => {
+    const radio = el.previousElementSibling;
+    if (radio.checked) {
+      el.style.border = '2.5px solid #283044';
+      el.style.boxShadow = '0 0 0 2px rgba(40,48,68,0.25)';
+    }
+    el.addEventListener('click', () => {
+      document.querySelectorAll('.colour-swatch').forEach(s => {
+        s.style.border = '2px solid #BFA89E';
+        s.style.boxShadow = 'none';
+      });
+      el.style.border = '2.5px solid #283044';
+      el.style.boxShadow = '0 0 0 2px rgba(40,48,68,0.25)';
+    });
+  });
+</script>

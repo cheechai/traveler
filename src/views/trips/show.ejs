@@ -1,0 +1,287 @@
+<%- include('../partials/header', { pageTitle: trip.title }) %>
+
+<!-- Trip header -->
+<div
+  style="
+    position: relative;
+    background-color: <%= trip.cover_color %>;
+    border: 1.5px solid #bfa89e;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(40, 48, 68, 0.12);
+    padding: 1.6rem;
+    margin-bottom: 2rem;
+    overflow: visible;
+  "
+>
+  <!-- subtle tape strips -->
+  <div
+    style="
+      position: absolute;
+      top: -10px;
+      left: 28px;
+      width: 72px;
+      height: 18px;
+      background: rgba(120, 161, 187, 0.4);
+      border-radius: 3px;
+      transform: rotate(-1.5deg);
+    "
+  ></div>
+  <div
+    style="
+      position: absolute;
+      top: -10px;
+      right: 48px;
+      width: 55px;
+      height: 18px;
+      background: rgba(191, 168, 158, 0.45);
+      border-radius: 3px;
+      transform: rotate(1.2deg);
+    "
+  ></div>
+
+  <div
+    style="
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    "
+  >
+    <div>
+      <div style="font-size: 3rem; line-height: 1; margin-bottom: 0.4rem">
+        <%= trip.cover_emoji %>
+      </div>
+      <h1
+        style="
+          font-family: 'Pacifico', cursive;
+          font-size: 2.2rem;
+          color: #283044;
+          margin: 0 0 0.3rem;
+          line-height: 1.1;
+        "
+      >
+        <%= trip.title %>
+      </h1>
+      <p
+        style="
+          font-size: 0.95rem;
+          font-weight: 600;
+          color: #283044;
+          opacity: 0.8;
+          margin: 0 0 0.2rem;
+        "
+      >
+        📍 <%= trip.destination %>
+      </p>
+      <p style="font-size: 0.875rem; color: #283044; opacity: 0.65; margin: 0">
+        📅 <%= formatDate(trip.start_date) %> → <%= formatDate(trip.end_date) %>
+      </p>
+      <% if (trip.budget > 0) { %>
+      <p
+        style="
+          font-size: 0.875rem;
+          color: #283044;
+          opacity: 0.65;
+          margin: 0.2rem 0 0;
+        "
+      >
+        💰 Budget: <%= trip.currency %> <%= trip.budget.toLocaleString() %>
+        &nbsp;·&nbsp; Spent: <%= trip.currency %> <%= totalSpent.toFixed(2) %>
+      </p>
+      <% } %>
+    </div>
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap">
+      <a href="/trips/<%= trip.id %>/edit" class="btn-ghost">Edit</a>
+      <a href="/trips/<%= trip.id %>/expenses" class="btn-ghost">Expenses</a>
+    </div>
+  </div>
+
+  <% if (trip.notes) { %>
+  <div
+    style="
+      background: rgba(255, 255, 255, 0.55);
+      border-radius: 8px;
+      padding: 0.6rem 0.9rem;
+      margin-top: 1rem;
+      font-size: 0.875rem;
+      color: #283044;
+    "
+  >
+    📝 <%= trip.notes %>
+  </div>
+  <% } %>
+</div>
+
+<!-- Itinerary section -->
+<div
+  style="
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.2rem;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+  "
+>
+  <h2
+    style="
+      font-family: 'Pacifico', cursive;
+      font-size: 1.7rem;
+      color: #283044;
+      margin: 0;
+    "
+  >
+    Itinerary
+  </h2>
+  <% if (days.length === 0) { %>
+  <form action="/trips/<%= trip.id %>/days/generate" method="POST">
+    <button type="submit" class="btn-primary">✨ Generate Days</button>
+  </form>
+  <% } else { %>
+  <form action="/trips/<%= trip.id %>/days/generate" method="POST">
+    <button type="submit" class="btn-ghost">Sync Days</button>
+  </form>
+  <% } %>
+</div>
+
+<% if (days.length === 0) { %>
+<div
+  style="
+    background: #ffffff;
+    border: 1.5px solid #bfa89e;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(40, 48, 68, 0.07);
+    padding: 2.5rem;
+    text-align: center;
+  "
+>
+  <div style="font-size: 2.8rem; margin-bottom: 0.5rem">📅</div>
+  <p style="font-size: 0.9rem; color: #8b786d">
+    No days yet — generate them from your trip dates!
+  </p>
+</div>
+<% } else { %> <% const washiColors =
+['#78A1BB','#BFA89E','#8B786D','#5d8aa8','#a08880','#6b87a0','#94837a'] %> <%
+const upcomingDays = days.filter(d => d.date >= today); const pastDays =
+days.filter(d => d.date < today); %>
+<div style="display: flex; flex-direction: column; gap: 1rem">
+  <% days.forEach((day, i) => { const isPast = day.date < today; const isToday =
+  day.date === today; %>
+  <!-- divider before past section -->
+  <% if (i > 0 && isPast && days[i-1].date >= today) { %>
+  <div
+    style="display: flex; align-items: center; gap: 0.75rem; margin: 0.4rem 0"
+  >
+    <div style="flex: 1; height: 1px; background: #bfa89e; opacity: 0.5"></div>
+    <span
+      style="
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #bfa89e;
+        white-space: nowrap;
+        letter-spacing: 0.04em;
+      "
+      >PAST DAYS</span
+    >
+    <div style="flex: 1; height: 1px; background: #bfa89e; opacity: 0.5"></div>
+  </div>
+  <% } %>
+
+  <div
+    style="background:<%= isPast ? '#f7f5f3' : '#ffffff' %>; border:1.5px solid <%= isToday ? '#78A1BB' : '#BFA89E' %>; border-radius:12px; box-shadow:<%= isPast ? 'none' : '0 2px 8px rgba(40,48,68,0.07)' %>; padding:1rem 1.1rem; position:relative; opacity:<%= isPast ? '0.72' : '1' %>;"
+  >
+    <!-- washi tape label -->
+    <div
+      style="position:absolute; top:-11px; left:14px; background:<%= isPast ? '#BFA89E' : washiColors[day.day_number % 7] %>; color:#ffffff; font-size:0.78rem; font-weight:600; padding:0.15rem 0.8rem; border-radius:4px; transform:rotate(-1deg); letter-spacing:0.02em;"
+    >
+      Day <%= day.day_number %><% if (isToday) { %> · Today<% } %>
+    </div>
+
+    <div
+      style="
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.3rem;
+      "
+    >
+      <div>
+        <span
+          style="font-size:0.9rem; font-weight:600; color:<%= isPast ? '#8B786D' : '#283044' %>;"
+          ><%= formatDate(day.date) %></span
+        >
+        <% if (day.title) { %><span
+          style="font-size: 0.875rem; color: #8b786d; margin-left: 0.4rem"
+          >— <%= day.title %></span
+        ><% } %>
+      </div>
+      <a
+        href="/trips/<%= trip.id %>/days/<%= day.id %>"
+        class="<%= isPast ? 'btn-ghost' : 'btn-primary' %>"
+        style="font-size: 0.82rem; padding: 0.3rem 0.75rem"
+        >Open Day →</a
+      >
+    </div>
+
+    <% const items = itemsByDay[day.id] || [] %> <% if (items.length === 0) { %>
+    <p
+      style="
+        font-size: 0.85rem;
+        color: #bfa89e;
+        font-style: italic;
+        margin: 0.5rem 0 0;
+      "
+    >
+      Nothing planned yet — tap Open Day to add!
+    </p>
+    <% } else { %>
+    <div
+      style="display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.6rem"
+    >
+      <% items.slice(0, 4).forEach(item => { %>
+      <span
+        style="display:inline-flex; align-items:center; gap:0.25rem; padding:0.2rem 0.6rem; background:<%= isPast ? '#f0eeec' : '#EBF5EE' %>; border:1px solid #BFA89E; border-radius:20px; font-size:0.8rem; color:<%= isPast ? '#8B786D' : '#283044' %>;"
+      >
+        <%= item.type === 'food' ? '🍽️' : item.type === 'activity' ? '⭐' :
+        item.type === 'transport' ? '🚗' : item.type === 'accommodation' ? '🏨'
+        : '📌' %> <%= item.title.length > 22 ? item.title.substring(0, 22) + '…'
+        : item.title %> <% if (item.start_time) { %><span
+          style="color: #bfa89e; font-size: 0.75rem"
+          ><%= item.start_time %></span
+        ><% } %>
+      </span>
+      <% }) %> <% if (items.length > 4) { %>
+      <span
+        style="
+          display: inline-flex;
+          align-items: center;
+          padding: 0.2rem 0.6rem;
+          background: #f5f3f1;
+          border: 1px solid #bfa89e;
+          border-radius: 20px;
+          font-size: 0.8rem;
+          color: #8b786d;
+        "
+        >+<%= items.length - 4 %> more</span
+      >
+      <% } %>
+    </div>
+    <% } %> <% if (day.notes) { %>
+    <p
+      style="
+        font-size: 0.82rem;
+        color: #8b786d;
+        font-style: italic;
+        margin: 0.4rem 0 0;
+      "
+    >
+      <%= day.notes %>
+    </p>
+    <% } %>
+  </div>
+  <% }) %>
+</div>
+<% } %> <%- include('../partials/footer') %>

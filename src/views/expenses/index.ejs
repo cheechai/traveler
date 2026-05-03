@@ -1,0 +1,221 @@
+<%- include('../partials/header', { pageTitle: trip.title + ' — Expenses' }) %>
+
+<div style="display:flex; align-items:center; gap:0.8rem; margin-bottom:1.5rem; flex-wrap:wrap;">
+  <a href="/trips/<%= trip.id %>" class="btn-ghost">← Back to Trip</a>
+  <h1 style="font-family:'Pacifico',cursive; font-size:2.2rem; color:#283044; margin:0;">💸 Expenses</h1>
+  <span style="font-size:0.9rem; color:#8B786D;">for <%= trip.title %></span>
+</div>
+
+<!-- Summary cards -->
+<div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:1rem; margin-bottom:1.8rem;">
+  <% const summaryCards = [
+    { emoji:'💰', label:'Budget',  val: trip.budget > 0 ? trip.currency + ' ' + trip.budget.toLocaleString() : '—', bg:'#eef4fb', rot:'-1.2deg' },
+    { emoji:'🧾', label:'Spent',   val: trip.currency + ' ' + (summary.total || 0).toFixed(2), bg:'#fdf6ee', rot:'1deg' },
+    { emoji:'📊', label:'Left',    val: trip.currency + ' ' + (trip.budget - (summary.total||0)).toFixed(2), bg: (trip.budget - (summary.total||0)) >= 0 ? '#eef7f2' : '#fff5f5', rot:'-0.7deg' },
+    { emoji:'🤝', label:'Shared',  val: trip.currency + ' ' + (summary.paid_shared||0).toFixed(2), bg:'#f4f0fb', rot:'1.3deg' },
+  ] %>
+  <% summaryCards.forEach(sc => { %>
+    <div style="background:<%= sc.bg %>; border:1.5px solid #BFA89E; border-radius:12px; box-shadow:0 2px 8px rgba(40,48,68,0.08); padding:1rem; text-align:center; transform:rotate(<%= sc.rot %>); position:relative;">
+      <div style="position:absolute; top:-9px; left:50%; transform:translateX(-50%); width:45px; height:15px; background:rgba(120,161,187,0.35); border-radius:3px;"></div>
+      <div style="font-size:1.8rem; margin-bottom:0.3rem;"><%= sc.emoji %></div>
+      <div style="font-size:0.78rem; color:#8B786D; margin-bottom:0.2rem;"><%= sc.label %></div>
+      <div style="font-family:'Pacifico',cursive; font-size:1.1rem; color:#283044; line-height:1.2;"><%= sc.val %></div>
+    </div>
+  <% }) %>
+</div>
+
+<!-- Split breakdown -->
+<% if ((summary.paid_me||0) + (summary.paid_partner||0) > 0) { %>
+<div style="background:#ffffff; border:1.5px solid #BFA89E; border-radius:12px; box-shadow:0 2px 8px rgba(40,48,68,0.07); padding:1.2rem; margin-bottom:1.2rem; position:relative;">
+  <div style="position:absolute; top:-10px; left:14px; background:#78A1BB; color:#ffffff; font-size:0.75rem; font-weight:600; padding:0.15rem 0.75rem; border-radius:4px; transform:rotate(-0.8deg); letter-spacing:0.02em;">Who paid?</div>
+  <div style="margin-top:0.4rem; display:flex; flex-direction:column; gap:0.65rem;">
+    <% [
+      { label:'👤 Me',      val: summary.paid_me||0,      color:'#78A1BB' },
+      { label:'💑 Partner', val: summary.paid_partner||0, color:'#BFA89E' },
+      { label:'🤝 Shared',  val: summary.paid_shared||0,  color:'#8B786D' },
+    ].forEach(row => { %>
+      <div style="display:flex; align-items:center; gap:0.7rem;">
+        <span style="font-size:0.85rem; color:#8B786D; width:80px; flex-shrink:0;"><%= row.label %></span>
+        <div style="flex:1; background:#EBF5EE; border-radius:4px; height:10px; overflow:hidden;">
+          <div style="height:100%; background:<%= row.color %>; width:<%= summary.total > 0 ? (row.val / summary.total * 100).toFixed(1) : 0 %>%; border-radius:4px; transition:width 0.4s;"></div>
+        </div>
+        <span style="font-size:0.85rem; font-weight:600; color:#283044; width:85px; text-align:right; flex-shrink:0;"><%= trip.currency %> <%= row.val.toFixed(2) %></span>
+      </div>
+    <% }) %>
+  </div>
+</div>
+<% } %>
+
+<!-- Category breakdown -->
+<% if (byCategory.length > 0) { %>
+<div style="background:#ffffff; border:1.5px solid #BFA89E; border-radius:12px; box-shadow:0 2px 8px rgba(40,48,68,0.07); padding:1.2rem; margin-bottom:1.2rem; position:relative;">
+  <div style="position:absolute; top:-10px; left:14px; background:#BFA89E; color:#ffffff; font-size:0.75rem; font-weight:600; padding:0.15rem 0.75rem; border-radius:4px; transform:rotate(0.8deg); letter-spacing:0.02em;">By Category</div>
+  <% const catColors = { food:'#f0a060', transport:'#a090c8', accommodation:'#60a8b8', activity:'#78A1BB', shopping:'#c080a0', other:'#8B786D' } %>
+  <% const catIcons  = { food:'🍽️', transport:'🚗', accommodation:'🏨', activity:'⭐', shopping:'🛍️', other:'📌' } %>
+  <div style="margin-top:0.4rem; display:flex; flex-direction:column; gap:0.65rem;">
+    <% byCategory.forEach(cat => { %>
+      <div style="display:flex; align-items:center; gap:0.7rem;">
+        <span style="font-size:0.85rem; color:#8B786D; width:110px; flex-shrink:0; text-transform:capitalize;"><%= catIcons[cat.category]||'📌' %> <%= cat.category %></span>
+        <div style="flex:1; background:#EBF5EE; border-radius:4px; height:10px; overflow:hidden;">
+          <div style="height:100%; background:<%= catColors[cat.category]||'#8B786D' %>; width:<%= summary.total > 0 ? (cat.total / summary.total * 100).toFixed(1) : 0 %>%; border-radius:4px;"></div>
+        </div>
+        <span style="font-size:0.85rem; font-weight:600; color:#283044; width:85px; text-align:right; flex-shrink:0;"><%= trip.currency %> <%= cat.total.toFixed(2) %></span>
+      </div>
+    <% }) %>
+  </div>
+</div>
+<% } %>
+
+<!-- Actions row -->
+<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; flex-wrap:wrap; gap:0.6rem;">
+  <h2 style="font-family:'Pacifico',cursive; font-size:1.6rem; color:#283044; margin:0;">All Expenses</h2>
+  <div style="display:flex; gap:0.5rem;">
+    <a href="/trips/<%= trip.id %>/expenses/export" class="btn-ghost">⬇️ CSV</a>
+    <button onclick="toggleAddExpense()" class="btn-primary">+ Add Expense</button>
+  </div>
+</div>
+
+<!-- Add expense form -->
+<div id="add-expense-form" style="display:none; background:#ffffff; border:1.5px solid #78A1BB; border-radius:12px; box-shadow:0 4px 14px rgba(40,48,68,0.1); padding:1.2rem; margin-bottom:1.5rem; position:relative;">
+  <div style="position:absolute; top:-10px; left:50%; transform:translateX(-50%) rotate(1deg); width:60px; height:17px; background:rgba(120,161,187,0.4); border-radius:3px;"></div>
+  <h3 style="font-family:'Pacifico',cursive; font-size:1.2rem; color:#283044; margin:0 0 0.9rem;">Add Expense 💰</h3>
+  <form action="/trips/<%= trip.id %>/expenses" method="POST">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem;">
+      <div style="grid-column:1/-1;">
+        <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.3rem;">Label *</label>
+        <input type="text" name="label" class="input-field" placeholder="e.g. Ramen dinner 🍜" required />
+      </div>
+      <div>
+        <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.3rem;">Amount *</label>
+        <input type="number" name="amount" class="input-field" placeholder="0.00" step="0.01" min="0" required />
+      </div>
+      <div>
+        <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.3rem;">Currency</label>
+        <select name="currency" class="input-field">
+          <% ['USD','EUR','GBP','JPY','SGD','MYR','AUD','THB','KRW','HKD'].forEach(c => { %>
+            <option value="<%= c %>" <%= trip.currency === c ? 'selected' : '' %>><%= c %></option>
+          <% }) %>
+        </select>
+      </div>
+      <div>
+        <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.3rem;">Category</label>
+        <select name="category" class="input-field">
+          <% [['food','🍽️ Food'],['transport','🚗 Transport'],['accommodation','🏨 Stay'],['activity','⭐ Activity'],['shopping','🛍️ Shopping'],['other','📌 Other']].forEach(([v,l]) => { %>
+            <option value="<%= v %>"><%= l %></option>
+          <% }) %>
+        </select>
+      </div>
+      <div>
+        <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.3rem;">Paid by</label>
+        <select name="paid_by" class="input-field">
+          <option value="shared">🤝 Shared</option>
+          <option value="me">👤 Me</option>
+          <option value="partner">💑 Partner</option>
+        </select>
+      </div>
+      <div>
+        <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.3rem;">Day (optional)</label>
+        <select name="day_id" class="input-field">
+          <option value="">— Trip level —</option>
+          <% days.forEach(d => { %>
+            <option value="<%= d.id %>">Day <%= d.day_number %> · <%= d.date %><% if (d.title) { %> – <%= d.title %><% } %></option>
+          <% }) %>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex; gap:0.5rem; margin-top:0.9rem;">
+      <button type="submit" class="btn-primary">Add ✅</button>
+      <button type="button" onclick="toggleAddExpense()" class="btn-ghost">Cancel</button>
+    </div>
+  </form>
+</div>
+
+<!-- Expense list -->
+<% if (expenses.length === 0) { %>
+  <div style="background:#ffffff; border:1.5px solid #BFA89E; border-radius:12px; padding:2rem; text-align:center;">
+    <div style="font-size:2.5rem; margin-bottom:0.4rem;">🧾</div>
+    <p style="font-size:0.9rem; color:#8B786D;">No expenses yet — add your first!</p>
+  </div>
+<% } else { %>
+  <% const expBg  = { food:'#fdf6ee', transport:'#f4f0fb', accommodation:'#eef7f2', activity:'#eef4fb', shopping:'#fdf0f7', other:'#f7f5f3' } %>
+  <div style="display:flex; flex-direction:column; gap:0.7rem;">
+    <% expenses.forEach((exp, i) => { %>
+      <div style="background:<%= expBg[exp.category]||'#f7f5f3' %>; border:1.5px solid #BFA89E; border-radius:12px; box-shadow:0 2px 6px rgba(40,48,68,0.07); padding:0.8rem 1rem; position:relative;">
+        <div style="display:flex; align-items:flex-start; gap:0.6rem;">
+          <span style="font-size:1.4rem; flex-shrink:0; margin-top:1px;"><%= exp.category==='food'?'🍽️':exp.category==='transport'?'🚗':exp.category==='accommodation'?'🏨':exp.category==='activity'?'⭐':exp.category==='shopping'?'🛍️':'📌' %></span>
+          <div style="flex:1; min-width:0;">
+            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:0.5rem; flex-wrap:wrap;">
+              <div>
+                <span style="font-size:0.9rem; font-weight:600; color:#283044;"><%= exp.label %></span>
+                <% if (exp.date) { %>
+                  <span style="font-size:0.78rem; color:#8B786D; margin-left:0.4rem;">Day <%= exp.day_number %> · <%= exp.date %></span>
+                <% } %>
+              </div>
+              <span style="font-family:'Pacifico',cursive; font-size:1rem; color:#283044; flex-shrink:0;"><%= exp.currency %> <%= exp.amount.toFixed(2) %></span>
+            </div>
+            <div style="display:flex; gap:0.35rem; flex-wrap:wrap; margin-top:0.3rem;">
+              <span style="font-size:0.75rem; font-weight:500; padding:0.1rem 0.5rem; background:rgba(40,48,68,0.06); border:1px solid #BFA89E; border-radius:20px; color:#8B786D; text-transform:capitalize;"><%= exp.category %></span>
+              <span style="font-size:0.75rem; font-weight:500; padding:0.1rem 0.5rem; border:1px solid #BFA89E; border-radius:20px; color:#283044;
+                background:<%= exp.paid_by==='me'?'#eef4fb':exp.paid_by==='partner'?'#f4f0fb':'#eef7f2' %>;">
+                <%= exp.paid_by==='me'?'👤 Me':exp.paid_by==='partner'?'💑 Partner':'🤝 Shared' %>
+              </span>
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:0.25rem; flex-shrink:0;">
+            <button onclick="toggleEditExpense(<%= exp.id %>)" style="padding:0.25rem 0.4rem; background:#EBF5EE; border:1px solid #BFA89E; border-radius:6px; cursor:pointer; font-size:0.85rem;">✏️</button>
+            <form action="/trips/<%= trip.id %>/expenses/<%= exp.id %>/delete" method="POST" onsubmit="return confirm('Delete this expense?')" style="display:inline;">
+              <button type="submit" style="padding:0.25rem 0.4rem; background:#fff5f5; border:1px solid #e8b4b4; border-radius:6px; cursor:pointer; font-size:0.85rem;">🗑️</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- inline edit -->
+        <div id="edit-expense-<%= exp.id %>" style="display:none; margin-top:0.8rem; padding-top:0.7rem; border-top:1px solid #e8e0d8;">
+          <form action="/trips/<%= trip.id %>/expenses/<%= exp.id %>" method="POST" style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+            <div style="grid-column:1/-1;"><input type="text" name="label" class="input-field" value="<%= exp.label %>" required /></div>
+            <div><input type="number" name="amount" class="input-field" value="<%= exp.amount %>" step="0.01" required /></div>
+            <div>
+              <select name="currency" class="input-field">
+                <% ['USD','EUR','GBP','JPY','SGD','MYR','AUD','THB','KRW','HKD'].forEach(c => { %>
+                  <option value="<%= c %>" <%= exp.currency===c?'selected':'' %>><%= c %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div>
+              <select name="category" class="input-field">
+                <% [['food','Food'],['transport','Transport'],['accommodation','Stay'],['activity','Activity'],['shopping','Shopping'],['other','Other']].forEach(([v,l]) => { %>
+                  <option value="<%= v %>" <%= exp.category===v?'selected':'' %>><%= l %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div>
+              <select name="paid_by" class="input-field">
+                <option value="shared" <%= exp.paid_by==='shared'?'selected':'' %>>🤝 Shared</option>
+                <option value="me"     <%= exp.paid_by==='me'?'selected':'' %>>👤 Me</option>
+                <option value="partner"<%= exp.paid_by==='partner'?'selected':'' %>>💑 Partner</option>
+              </select>
+            </div>
+            <div style="grid-column:1/-1; display:flex; gap:0.4rem;">
+              <button type="submit" class="btn-primary" style="font-size:0.85rem;">Save</button>
+              <button type="button" onclick="toggleEditExpense(<%= exp.id %>)" class="btn-ghost" style="font-size:0.85rem;">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+<% } %>
+
+<script>
+  function toggleAddExpense() {
+    const el = document.getElementById('add-expense-form');
+    el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    if (el.style.display !== 'none') el.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+  function toggleEditExpense(id) {
+    const el = document.getElementById('edit-expense-' + id);
+    el.style.display = el.style.display === 'none' ? 'block' : 'none';
+  }
+</script>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+/*
+  Palette:
+  --navy:  #283044  (dark, primary text, nav)
+  --blue:  #78A1BB  (accent, buttons, links)
+  --mint:  #EBF5EE  (page bg, light surfaces)
+  --taupe: #BFA89E  (borders, muted)
+  --brown: #8B786D  (secondary text)
+*/
+
+@layer base {
+  body {
+    background-color: #EBF5EE;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23BFA89E' fill-opacity='0.12'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    font-family: 'Inter', sans-serif;
+    color: #283044;
+  }
+  * { box-sizing: border-box; }
+  h1, h2, h3, h4 { font-family: 'Pacifico', cursive; color: #283044; }
+}
+
+@layer components {
+
+  /* ── Buttons ─────────────────────────────── */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 1.1rem;
+    background-color: #78A1BB;
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 2px 6px rgba(40,48,68,0.18);
+    transition: all 0.15s;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .btn-primary:hover {
+    background-color: #5d8aa8;
+    box-shadow: 0 4px 10px rgba(40,48,68,0.22);
+    transform: translateY(-1px);
+  }
+
+  .btn-danger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 1.1rem;
+    background-color: #c97d7d;
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 2px 6px rgba(40,48,68,0.15);
+    transition: all 0.15s;
+    cursor: pointer;
+  }
+  .btn-danger:hover {
+    background-color: #b56565;
+    transform: translateY(-1px);
+  }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.9rem;
+    background-color: rgba(235,245,238,0.8);
+    color: #283044;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 8px;
+    border: 1.5px solid #BFA89E;
+    transition: all 0.15s;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .btn-ghost:hover {
+    background-color: #dceae0;
+    border-color: #8B786D;
+  }
+
+  /* ── Cards ──────────────────────────────── */
+  .card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    border: 1.5px solid #BFA89E;
+    box-shadow: 0 2px 8px rgba(40,48,68,0.08);
+    padding: 1.1rem;
+    position: relative;
+  }
+
+  /* ── Inputs ─────────────────────────────── */
+  .input-field {
+    width: 100%;
+    border-radius: 8px;
+    border: 1.5px solid #BFA89E;
+    padding: 0.5rem 0.75rem;
+    color: #283044;
+    background-color: #ffffff;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+  }
+  .input-field:focus {
+    border-color: #78A1BB;
+    box-shadow: 0 0 0 3px rgba(120,161,187,0.2);
+  }
+
+  /* ── Washi tape strip ───────────────────── */
+  .washi {
+    display: inline-block;
+    padding: 0.2rem 0.9rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: #283044;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── Font helpers ───────────────────────── */
+  .font-display { font-family: 'Pacifico', cursive !important; }
+}

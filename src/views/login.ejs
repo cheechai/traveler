@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome — Traveler ✈️</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/app.css" />
+</head>
+<body style="min-height:100vh; background-color:#EBF5EE; display:flex; align-items:center; justify-content:center; padding:2rem; font-family:'Inter',sans-serif; color:#283044;">
+
+  <div style="width:100%; max-width:380px;">
+
+    <!-- Title card -->
+    <div style="background:#283044; border-radius:16px; padding:2rem; text-align:center; margin-bottom:1rem; transform:rotate(-1.5deg); box-shadow:0 8px 24px rgba(40,48,68,0.25);">
+      <!-- tape strip -->
+      <div style="position:absolute; top:-10px; left:50%; transform:translateX(-50%) rotate(1deg); width:70px; height:18px; background:rgba(120,161,187,0.55); border-radius:3px;"></div>
+      <div style="font-size:3.5rem; margin-bottom:0.5rem;">✈️</div>
+      <h1 style="font-family:'Pacifico',cursive; font-size:2.6rem; color:#EBF5EE; margin:0 0 0.3rem;">Traveler</h1>
+      <p style="font-family:'Inter',sans-serif; font-size:0.95rem; color:#78A1BB; margin:0;">Your adventure awaits ✨</p>
+    </div>
+
+    <!-- Login card -->
+    <div style="background:#ffffff; border-radius:16px; border:1.5px solid #BFA89E; box-shadow:0 4px 16px rgba(40,48,68,0.1); padding:1.6rem; transform:rotate(0.8deg); position:relative; margin-top:1.2rem;">
+      <!-- tape strip -->
+      <div style="position:absolute; top:-10px; left:38%; transform:translateX(-50%) rotate(-1.2deg); width:65px; height:18px; background:rgba(191,168,158,0.45); border-radius:3px;"></div>
+
+      <% if (error) { %>
+        <div style="background:#fde8e8; border:1.5px solid #c97d7d; border-radius:8px; padding:0.5rem 0.8rem; margin-bottom:1rem; font-size:0.875rem; color:#7a2020;">
+          ❌ <%= error %>
+        </div>
+      <% } %>
+
+      <form action="/login" method="POST">
+        <div style="margin-bottom:1rem;">
+          <label style="display:block; font-size:0.875rem; font-weight:600; color:#283044; margin-bottom:0.4rem;">Password</label>
+          <input type="password" name="password" class="input-field" placeholder="Enter the secret password…" autofocus required />
+        </div>
+        <button type="submit" class="btn-primary" style="width:100%; justify-content:center; font-size:0.95rem; padding:0.65rem 1rem;">
+          Let's Go! 🗺️
+        </button>
+      </form>
+    </div>
+
+    <p style="text-align:center; font-size:0.8rem; color:#8B786D; margin-top:1.2rem;">Personal travel planner for two 💑</p>
+  </div>
+</body>
+</html>
