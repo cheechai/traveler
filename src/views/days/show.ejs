@@ -8,7 +8,7 @@ day.day_number }) %>
     align-items: center;
     gap: 0.4rem;
     margin-bottom: 1rem;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     flex-wrap: wrap;
     color: #8b786d;
   "
@@ -47,9 +47,9 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
       left: 18px;
       background: <%= wc %>;
       color: #ffffff;
-      font-size: 0.78rem;
-      font-weight: 600;
-      padding: 0.15rem 0.9rem;
+      font-size: 0.88rem;
+      font-weight: 700;
+      padding: 0.18rem 1rem;
       border-radius: 4px;
       transform: rotate(-1.2deg);
       letter-spacing: 0.02em;
@@ -82,7 +82,7 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
   >
     <div>
       <p
-        style="font-size: 0.95rem; font-weight: 600; color: #283044; margin: 0"
+        style="font-size: 1rem; font-weight: 600; color: #283044; margin: 0"
       >
         <%= formatDate(day.date) %>
       </p>
@@ -90,7 +90,7 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
       <h1
         style="
           font-family: 'Pacifico', cursive;
-          font-size: 1.9rem;
+          font-size: 2.2rem;
           color: #283044;
           margin: 0.2rem 0 0;
           line-height: 1.1;
@@ -101,9 +101,9 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
       <% } %> <% if (day.notes) { %>
       <p
         style="
-          font-size: 0.875rem;
+          font-size: 0.95rem;
           color: #283044;
-          opacity: 0.7;
+          opacity: 0.8;
           margin: 0.3rem 0 0;
         "
       >
@@ -140,7 +140,7 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
     <% days.forEach(d => { %>
     <a
       href="/trips/<%= trip.id %>/days/<%= d.id %>"
-      style="font-size:0.78rem; font-weight:600; padding:0.2rem 0.6rem; border-radius:20px; border:1.5px solid <%= d.id === day.id ? '#283044' : '#BFA89E' %>; text-decoration:none; background:<%= d.id === day.id ? '#283044' : 'rgba(255,255,255,0.6)' %>; color:<%= d.id === day.id ? '#EBF5EE' : '#283044' %>; transition:all 0.15s;"
+      style="font-size:0.82rem; font-weight:600; padding:0.22rem 0.65rem; border-radius:20px; border:1.5px solid <%= d.id === day.id ? '#283044' : '#BFA89E' %>; text-decoration:none; background:<%= d.id === day.id ? '#283044' : 'rgba(255,255,255,0.6)' %>; color:<%= d.id === day.id ? '#EBF5EE' : '#283044' %>; transition:all 0.15s;"
     >
       D<%= d.day_number %>
     </a>
@@ -162,7 +162,7 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
   <h2
     style="
       font-family: 'Pacifico', cursive;
-      font-size: 1.6rem;
+      font-size: 1.7rem;
       color: #283044;
       margin: 0;
     "
@@ -213,7 +213,7 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
       <label
         style="
           display: block;
-          font-size: 0.82rem;
+          font-size: 0.85rem;
           font-weight: 600;
           color: #283044;
           margin-bottom: 0.35rem;
@@ -241,7 +241,7 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
               padding: 0.3rem 0.75rem;
               border-radius: 20px;
               border: 1.5px solid #bfa89e;
-              font-size: 0.85rem;
+              font-size: 0.88rem;
               font-weight: 500;
               cursor: pointer;
               transition: all 0.12s;
@@ -260,7 +260,7 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
         <label
           style="
             display: block;
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: #283044;
             margin-bottom: 0.3rem;
@@ -279,7 +279,7 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
         <label
           style="
             display: block;
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: #283044;
             margin-bottom: 0.3rem;
@@ -292,7 +292,7 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
         <label
           style="
             display: block;
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: #283044;
             margin-bottom: 0.3rem;
@@ -303,7 +303,7 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
       </div>
       <% if (days.length > 1) { %>
       <div style="grid-column:1/-1;">
-        <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.3rem;">Ends on day <span style="font-weight:400; color:#8B786D;">(optional — for multi-day items)</span></label>
+        <label style="display:block; font-size:0.85rem; font-weight:600; color:#283044; margin-bottom:0.3rem;">Ends on day <span style="font-weight:400; color:#8B786D;">(optional — for multi-day items)</span></label>
         <select name="end_day_id" class="input-field">
           <option value="">— same day —</option>
           <% days.filter(d => d.id !== day.id).forEach(d => { %>
@@ -313,22 +313,22 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
       </div>
       <% } %>
       <!-- Flight fields (shown only when type=flight) -->
-      <div id="new-flight-fields" style="display:none;">
+      <div id="new-flight-fields" style="display:none; grid-column:1/-1;">
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
           <div>
-            <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.3rem;">Flight No.</label>
+            <label style="display:block; font-size:0.85rem; font-weight:600; color:#283044; margin-bottom:0.3rem;">Flight No.</label>
             <input type="text" name="flight_number" class="input-field" placeholder="e.g. SQ321" />
           </div>
           <div>
-            <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.3rem;">Airline</label>
+            <label style="display:block; font-size:0.85rem; font-weight:600; color:#283044; margin-bottom:0.3rem;">Airline</label>
             <input type="text" name="airline" class="input-field" placeholder="e.g. Singapore Airlines" />
           </div>
           <div>
-            <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.3rem;">From (airport)</label>
+            <label style="display:block; font-size:0.85rem; font-weight:600; color:#283044; margin-bottom:0.3rem;">From (airport)</label>
             <input type="text" name="departure_airport" class="input-field" placeholder="e.g. SIN" />
           </div>
           <div>
-            <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.3rem;">To (airport)</label>
+            <label style="display:block; font-size:0.85rem; font-weight:600; color:#283044; margin-bottom:0.3rem;">To (airport)</label>
             <input type="text" name="arrival_airport" class="input-field" placeholder="e.g. AKL" />
           </div>
         </div>
@@ -337,7 +337,7 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
         <label
           style="
             display: block;
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: #283044;
             margin-bottom: 0.3rem;
@@ -356,7 +356,7 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
             type="button"
             onclick="buildMapsUrl('new')"
             class="btn-ghost"
-            style="white-space: nowrap; font-size: 0.82rem"
+            style="white-space: nowrap; font-size: 0.85rem"
           >
             Build link
           </button>
@@ -366,7 +366,7 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
         <label
           style="
             display: block;
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: #283044;
             margin-bottom: 0.3rem;
@@ -385,7 +385,7 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
         <label
           style="
             display: block;
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: #283044;
             margin-bottom: 0.3rem;
@@ -403,18 +403,18 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
         <label
           style="
             display: block;
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: #283044;
             margin-bottom: 0.3rem;
           "
-          >Notes</label
+          >Notes <span style="font-weight:400; font-size:0.8rem; color:#8B786D;">(one item per line — saves as checklist)</span></label
         >
         <textarea
           name="notes"
           class="input-field"
-          rows="2"
-          placeholder="Any details to remember…"
+          rows="3"
+          placeholder="Book window seat&#10;Bring passport&#10;Check luggage allowance"
         ></textarea>
       </div>
     </div>
@@ -438,8 +438,7 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
     text-align: center;
   "
 >
-  <div style="font-size: 2.8rem; margin-bottom: 0.5rem"></div>
-  <p style="font-size: 0.9rem; color: #8b786d">
+  <p style="font-size: 0.95rem; color: #8b786d">
     Nothing planned yet — add your first item above!
   </p>
 </div>
@@ -524,7 +523,7 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
             "
             >⠿</span
           >
-          <span style="font-size: 1.4rem; line-height: 1"
+          <span style="font-size: 1.5rem; line-height: 1"
             ><%= typeIcons[item.type] || '📌' %></span
           >
         </div>
@@ -536,21 +535,22 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
               align-items: center;
               flex-wrap: wrap;
               gap: 0.4rem;
-              margin-bottom: 0.2rem;
+              margin-bottom: 0.25rem;
             "
           >
-            <span style="font-size: 0.95rem; font-weight: 600; color: #283044"
+            <span style="font-size: 1.05rem; font-weight: 700; color: #283044"
               ><%= item.title %></span
             >
             <% if (item.start_time) { %>
             <span
               style="
-                font-size: 0.78rem;
-                color: #8b786d;
+                font-size: 0.82rem;
+                color: #283044;
                 background: rgba(40, 48, 68, 0.06);
                 border: 1px solid #bfa89e;
                 border-radius: 20px;
                 padding: 0 0.5rem;
+                font-weight: 500;
               "
               >⏰ <%= item.start_time %><%= item.end_time ? ' – ' +
               item.end_time : '' %></span
@@ -558,13 +558,13 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
             <% } %>
             <span
               style="
-                font-size: 0.75rem;
+                font-size: 0.78rem;
                 font-weight: 500;
                 padding: 0.1rem 0.5rem;
                 background: rgba(40, 48, 68, 0.06);
                 border: 1px solid #bfa89e;
                 border-radius: 20px;
-                color: #8b786d;
+                color: #5a5a5a;
                 text-transform: capitalize;
               "
               ><%= item.type %></span
@@ -572,15 +572,17 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
             <% if (item.end_day_id) {
                  const endDay = days.find(d => d.id === item.end_day_id);
                  if (endDay) { %>
-            <span style="font-size:0.75rem; font-weight:600; padding:0.1rem 0.55rem; background:#78A1BB; color:#fff; border-radius:20px; white-space:nowrap;">→ Day <%= endDay.day_number %></span>
+            <span style="font-size:0.78rem; font-weight:600; padding:0.1rem 0.55rem; background:#78A1BB; color:#fff; border-radius:20px; white-space:nowrap;">→ Day <%= endDay.day_number %></span>
             <% } } %>
           </div>
+
           <% if (item.location_name) { %>
           <p
             style="
-              font-size: 0.85rem;
-              color: #8b786d;
-              margin: 0.1rem 0 0;
+              font-size: 0.9rem;
+              color: #283044;
+              font-weight: 600;
+              margin: 0.15rem 0 0;
               display: flex;
               align-items: center;
               gap: 0.3rem;
@@ -594,7 +596,7 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
               rel="noopener"
               style="
                 color: #78a1bb;
-                font-size: 0.8rem;
+                font-size: 0.82rem;
                 text-decoration: none;
                 font-weight: 500;
               "
@@ -603,43 +605,45 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
             <% } %>
           </p>
           <% } %>
+
           <% if (item.type === 'flight' && (item.departure_airport || item.arrival_airport || item.flight_number)) { %>
           <div style="margin-top:0.4rem; display:flex; align-items:center; flex-wrap:wrap; gap:0.4rem;">
             <% if (item.departure_airport || item.arrival_airport) { %>
-            <span style="font-size:0.92rem; font-weight:700; color:#283044; letter-spacing:0.03em;">
+            <span style="font-size:0.95rem; font-weight:700; color:#283044; letter-spacing:0.03em;">
               <%= item.departure_airport || '?' %> ✈️ <%= item.arrival_airport || '?' %>
             </span>
             <% } %>
             <% if (item.flight_number) { %>
-            <span style="font-size:0.78rem; background:#eef0fb; border:1px solid #a0a8d8; border-radius:6px; padding:0.1rem 0.5rem; color:#4050a0; font-weight:600;"><%= item.flight_number %></span>
+            <span style="font-size:0.8rem; background:#eef0fb; border:1px solid #a0a8d8; border-radius:6px; padding:0.1rem 0.5rem; color:#4050a0; font-weight:600;"><%= item.flight_number %></span>
             <% } %>
             <% if (item.airline) { %>
-            <span style="font-size:0.78rem; color:#8B786D;"><%= item.airline %></span>
+            <span style="font-size:0.82rem; color:#5a5a5a; font-weight:500;"><%= item.airline %></span>
             <% } %>
           </div>
           <% } %>
+
           <% if (item.notes) { %>
-          <p
-            style="
-              font-size: 0.85rem;
-              color: #8b786d;
-              font-style: italic;
-              margin: 0.2rem 0 0;
-            "
-          >
-            <%= item.notes %>
-          </p>
-          <% } %> <% if (item.link) { %>
+          <ul style="margin: 0.4rem 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 0.3rem;">
+            <% item.notes.split('\n').filter(l => l.trim()).forEach(line => { %>
+            <li style="display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.9rem; color: #3d3d3d;">
+              <input type="checkbox" style="margin-top: 3px; flex-shrink: 0; accent-color: #78A1BB; cursor: pointer; width: 15px; height: 15px;" onchange="this.parentElement.style.opacity = this.checked ? '0.45' : '1';" />
+              <span><%= line.trim() %></span>
+            </li>
+            <% }) %>
+          </ul>
+          <% } %>
+
+          <% if (item.link) { %>
           <a
             href="<%= item.link %>"
             target="_blank"
             rel="noopener"
             style="
-              font-size: 0.82rem;
+              font-size: 0.88rem;
               color: #78a1bb;
               text-decoration: none;
               font-weight: 500;
-              margin-top: 0.2rem;
+              margin-top: 0.3rem;
               display: inline-block;
             "
             >🔗 Website / Booking ↗</a
@@ -668,7 +672,7 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
               border: 1px solid #bfa89e;
               border-radius: 6px;
               cursor: pointer;
-              font-size: 0.75rem;
+              font-size: 0.78rem;
               font-weight: 600;
               color: #283044;
             "
@@ -729,7 +733,7 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
               <span
                 class="type-btn"
                 data-value="<%= val %>"
-                style="display:inline-flex; align-items:center; gap:0.25rem; padding:0.25rem 0.65rem; border-radius:20px; font-size:0.82rem; font-weight:500; cursor:pointer; transition:all 0.12s; border:1.5px solid <%= item.type === val ? '#283044' : '#BFA89E' %>; background:<%= item.type === val ? '#283044' : '#EBF5EE' %>; color:<%= item.type === val ? '#EBF5EE' : '#283044' %>;"
+                style="display:inline-flex; align-items:center; gap:0.25rem; padding:0.25rem 0.65rem; border-radius:20px; font-size:0.85rem; font-weight:500; cursor:pointer; transition:all 0.12s; border:1.5px solid <%= item.type === val ? '#283044' : '#BFA89E' %>; background:<%= item.type === val ? '#283044' : '#EBF5EE' %>; color:<%= item.type === val ? '#EBF5EE' : '#283044' %>;"
               >
                 <%= icon %> <%= lbl %>
               </span>
@@ -766,7 +770,7 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
             </div>
             <% if (days.length > 1) { %>
             <div style="grid-column:1/-1;">
-              <label style="display:block; font-size:0.78rem; font-weight:600; color:#283044; margin-bottom:0.25rem;">Ends on day <span style="font-weight:400; color:#8B786D;">(optional)</span></label>
+              <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.25rem;">Ends on day <span style="font-weight:400; color:#8B786D;">(optional)</span></label>
               <select name="end_day_id" class="input-field">
                 <option value="">— same day —</option>
                 <% days.filter(d => d.id !== day.id).forEach(d => { %>
@@ -778,19 +782,19 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
             <!-- Flight fields (shown only when type=flight) -->
             <div id="edit-flight-fields-<%= item.id %>" style="display:<%= item.type==='flight' ? 'grid' : 'none' %>; grid-column:1/-1; grid-template-columns:1fr 1fr; gap:0.5rem;">
               <div>
-                <label style="display:block; font-size:0.78rem; font-weight:600; color:#283044; margin-bottom:0.25rem;">Flight No.</label>
+                <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.25rem;">Flight No.</label>
                 <input type="text" name="flight_number" class="input-field" placeholder="e.g. SQ321" value="<%= item.flight_number || '' %>" />
               </div>
               <div>
-                <label style="display:block; font-size:0.78rem; font-weight:600; color:#283044; margin-bottom:0.25rem;">Airline</label>
+                <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.25rem;">Airline</label>
                 <input type="text" name="airline" class="input-field" placeholder="e.g. Singapore Airlines" value="<%= item.airline || '' %>" />
               </div>
               <div>
-                <label style="display:block; font-size:0.78rem; font-weight:600; color:#283044; margin-bottom:0.25rem;">From (airport)</label>
+                <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.25rem;">From (airport)</label>
                 <input type="text" name="departure_airport" class="input-field" placeholder="e.g. SIN" value="<%= item.departure_airport || '' %>" />
               </div>
               <div>
-                <label style="display:block; font-size:0.78rem; font-weight:600; color:#283044; margin-bottom:0.25rem;">To (airport)</label>
+                <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.25rem;">To (airport)</label>
                 <input type="text" name="arrival_airport" class="input-field" placeholder="e.g. AKL" value="<%= item.arrival_airport || '' %>" />
               </div>
             </div>
@@ -834,16 +838,14 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
               />
             </div>
             <div style="grid-column: 1/-1">
-              <textarea name="notes" class="input-field" rows="2">
-<%= item.notes || '' %></textarea
-              >
+              <textarea name="notes" class="input-field" rows="3" placeholder="One item per line — saves as checklist"><%= item.notes || '' %></textarea>
             </div>
           </div>
           <div style="display: flex; gap: 0.4rem; margin-top: 0.6rem">
             <button
               type="submit"
               class="btn-primary"
-              style="font-size: 0.85rem"
+              style="font-size: 0.88rem"
             >
               Save
             </button>
@@ -851,7 +853,7 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
               type="button"
               onclick="toggleEditItem(<%= item.id %>)"
               class="btn-ghost"
-              style="font-size: 0.85rem"
+              style="font-size: 0.88rem"
             >
               Cancel
             </button>
@@ -861,77 +863,64 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
     </div>
 
     <!-- Direction connector between items -->
-    <% if (idx < items.length - 1) { %> <% const nextItem = items[idx + 1] %>
-    <div
-      style="
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 0.35rem 0;
-        gap: 0.4rem;
-      "
-    >
-      <div
-        style="
-          width: 1.5px;
-          height: 18px;
-          background: repeating-linear-gradient(
-            to bottom,
-            #bfa89e 0,
-            #bfa89e 4px,
-            transparent 4px,
-            transparent 7px
-          );
-        "
-      ></div>
-      <% if (item.location_name && nextItem.location_name) { %> <% const leg =
-      legsMap[item.id] %> <% const fromEnc =
-      encodeURIComponent(item.location_name) %> <% const toEnc =
-      encodeURIComponent(nextItem.location_name) %> <% const autoUrl =
-      `https://www.google.com/maps/dir/?api=1&origin=${fromEnc}&destination=${toEnc}&travelmode=${leg
-      ? leg.transport_mode : 'driving'}` %>
+    <% if (idx < items.length - 1) { %>
+    <% const nextItem = items[idx + 1] %>
+    <div style="display: flex; flex-direction: column; align-items: center; padding: 0.1rem 0; position: relative;">
+
+      <!-- top dot -->
+      <div style="width: 10px; height: 10px; border-radius: 50%; background: #BFA89E; border: 2px solid #fff; box-shadow: 0 0 0 1.5px #BFA89E; flex-shrink:0;"></div>
+
+      <!-- dashed line segment -->
+      <div style="width: 2px; height: 14px; background: repeating-linear-gradient(to bottom, #BFA89E 0, #BFA89E 4px, transparent 4px, transparent 8px);"></div>
+
+      <% if (item.location_name && nextItem.location_name) { %>
+      <!-- direction chip with live travel time -->
+      <% const fromEnc = encodeURIComponent(item.location_name) %>
+      <% const toEnc   = encodeURIComponent(nextItem.location_name) %>
+      <% const autoUrl = `https://www.google.com/maps/dir/?api=1&origin=${fromEnc}&destination=${toEnc}&travelmode=driving` %>
       <a
-        href="<%= leg ? leg.maps_url : autoUrl %>"
+        href="<%= autoUrl %>"
         target="_blank"
         rel="noopener"
+        id="dir-<%= item.id %>-<%= nextItem.id %>"
+        data-origin="<%= item.location_name %>"
+        data-dest="<%= nextItem.location_name %>"
         style="
           display: inline-flex;
           align-items: center;
-          gap: 0.3rem;
-          padding: 0.2rem 0.75rem;
-          background: #ebf5ee;
-          border: 1px solid #78a1bb;
+          gap: 0.35rem;
+          padding: 0.22rem 0.8rem;
+          background: #fff;
+          border: 1.5px solid #e05c5c;
           border-radius: 20px;
-          font-size: 0.8rem;
-          font-weight: 500;
-          color: #78a1bb;
+          font-size: 0.82rem;
+          font-weight: 600;
+          color: #e05c5c;
           text-decoration: none;
           transition: all 0.15s;
+          white-space: nowrap;
         "
-        onmouseover="this.style.background='#78A1BB'; this.style.color='#ffffff';"
-        onmouseout="this.style.background='#EBF5EE'; this.style.color='#78A1BB';"
+        onmouseover="this.style.background='#e05c5c'; this.style.color='#ffffff';"
+        onmouseout="this.style.background='#fff'; this.style.color='#e05c5c';"
       >
-        🗺️ Directions<% if (leg && leg.duration_min) { %> · <%= leg.duration_min
-        %> min<% } %> ↗
+        <svg width="12" height="14" viewBox="0 0 12 16" fill="currentColor" style="flex-shrink:0;">
+          <path d="M6 0C3.24 0 1 2.24 1 5c0 3.75 5 11 5 11s5-7.25 5-11c0-2.76-2.24-5-5-5zm0 7.5C4.62 7.5 3.5 6.38 3.5 5S4.62 2.5 6 2.5 8.5 3.62 8.5 5 7.38 7.5 6 7.5z"/>
+        </svg>
+        <span id="dur-<%= item.id %>-<%= nextItem.id %>">Directions ↗</span>
       </a>
       <% } else { %>
-      <div
-        style="width: 16px; height: 1.5px; background: #bfa89e; opacity: 0.5"
-      ></div>
+      <!-- plain dot when no locations -->
+      <div style="width: 7px; height: 7px; border-radius: 50%; background: #e0d8d0;"></div>
       <% } %>
-      <div
-        style="
-          width: 1.5px;
-          height: 18px;
-          background: repeating-linear-gradient(
-            to bottom,
-            #bfa89e 0,
-            #bfa89e 4px,
-            transparent 4px,
-            transparent 7px
-          );
-        "
-      ></div>
+
+      <!-- dashed line segment -->
+      <div style="width: 2px; height: 14px; background: repeating-linear-gradient(to bottom, #BFA89E 0, #BFA89E 4px, transparent 4px, transparent 8px);"></div>
+
+      <!-- bottom locator pin -->
+      <svg width="14" height="16" viewBox="0 0 12 16" fill="#e05c5c" style="flex-shrink:0;">
+        <path d="M6 0C3.24 0 1 2.24 1 5c0 3.75 5 11 5 11s5-7.25 5-11c0-2.76-2.24-5-5-5zm0 7.5C4.62 7.5 3.5 6.38 3.5 5S4.62 2.5 6 2.5 8.5 3.62 8.5 5 7.38 7.5 6 7.5z"/>
+      </svg>
+
     </div>
     <% } %>
   </div>
@@ -951,7 +940,6 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
   });
 
   function getFlightFields(container) {
-    // for add form: #new-flight-fields; for edit form: #edit-flight-fields-{id}
     const ts = container.closest('form') || container.parentElement;
     return ts ? ts.querySelector('[id^="new-flight-fields"],[id^="edit-flight-fields"]') : null;
   }
@@ -1025,7 +1013,6 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
     const el = document.querySelector(hash);
     if (!el) return;
     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    const card = el.querySelector('[style*="background:"]') || el.firstElementChild;
     const inner = el.children[0];
     if (inner) {
       inner.style.outline = '2.5px solid #78A1BB';
@@ -1034,6 +1021,38 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
     }
   }
   window.addEventListener('load', highlightHash);
+
+  // Live driving time: Nominatim geocoding → OSRM routing
+  async function geocodeNominatim(name) {
+    const r = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(name)}&format=json&limit=1`,
+      { headers: { 'User-Agent': 'traveler-app' } }
+    ).then(r => r.json());
+    if (!r.length) return null;
+    return { lat: parseFloat(r[0].lat), lon: parseFloat(r[0].lon) };
+  }
+
+  document.querySelectorAll('[id^="dir-"]').forEach(async (el) => {
+    const origin = el.dataset.origin;
+    const dest   = el.dataset.dest;
+    const durEl  = el.querySelector('[id^="dur-"]');
+    if (!origin || !dest || !durEl) return;
+    try {
+      const [oCoord, dCoord] = await Promise.all([
+        geocodeNominatim(origin),
+        geocodeNominatim(dest)
+      ]);
+      if (!oCoord || !dCoord) return;
+      const route = await fetch(
+        `https://router.project-osrm.org/route/v1/driving/${oCoord.lon},${oCoord.lat};${dCoord.lon},${dCoord.lat}?overview=false`
+      ).then(r => r.json());
+      if (!route.routes?.length) return;
+      const mins = Math.round(route.routes[0].duration / 60);
+      const hrs  = Math.floor(mins / 60);
+      const rem  = mins % 60;
+      durEl.textContent = hrs > 0 ? `${hrs}h ${rem}m drive ↗` : `${mins} min drive ↗`;
+    } catch(e) {}
+  });
 </script>
 
 <%- include('../partials/footer') %>
