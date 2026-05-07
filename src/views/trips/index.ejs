@@ -40,7 +40,7 @@
       />
     </svg>
   </div>
-  <a href="/trips/new" class="btn-primary">✏️ New Trip</a>
+  <a href="/trips/new" class="btn-primary">New Trip</a>
 </div>
 
 <% if (trips.length === 0) { %>
@@ -83,9 +83,9 @@
       No trips yet!
     </h2>
     <p style="font-size: 0.9rem; color: #bfa89e; margin: 0 0 1.2rem">
-      Time to plan your first adventure together ✨
+      Time to plan your first adventure together.
     </p>
-    <a href="/trips/new" class="btn-primary">Plan a Trip ✈️</a>
+    <a href="/trips/new" class="btn-primary">Plan a Trip</a>
   </div>
 </div>
 
@@ -164,10 +164,10 @@
             opacity: 0.75;
           "
         >
-          📍 <%= trip.destination %>
+          <%= trip.destination %>
         </p>
         <p style="font-size: 0.82rem; color: #283044; margin: 0; opacity: 0.65">
-          📅 <%= trip.start_date %> → <%= trip.end_date %>
+          <%= formatDate(trip.start_date) %> → <%= formatDate(trip.end_date) %>
         </p>
         <% if (trip.budget > 0) { %>
         <p
@@ -178,7 +178,7 @@
             opacity: 0.65;
           "
         >
-          💰 <%= trip.currency %> <%= trip.budget.toLocaleString() %>
+          <%= trip.currency %> <%= trip.budget.toLocaleString() %>
         </p>
         <% } %>
       </div>

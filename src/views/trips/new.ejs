@@ -3,13 +3,13 @@
 <div style="max-width:640px; margin:0 auto;">
   <div style="display:flex; align-items:center; gap:0.8rem; margin-bottom:1.5rem; flex-wrap:wrap;">
     <a href="/trips" class="btn-ghost">← Back</a>
-    <h1 style="font-family:'Pacifico',cursive; font-size:2rem; color:#283044; margin:0;">Plan a New Trip 🗺️</h1>
+    <h1 style="font-family:'Pacifico',cursive; font-size:2rem; color:#283044; margin:0;">Plan a New Trip</h1>
   </div>
 
   <div style="background:#ffffff; border:1.5px solid #BFA89E; border-radius:16px; box-shadow:0 4px 16px rgba(40,48,68,0.1); padding:1.6rem; position:relative;">
     <div style="position:absolute; top:-10px; left:50%; transform:translateX(-50%) rotate(1deg); width:65px; height:18px; background:rgba(120,161,187,0.4); border-radius:3px;"></div>
     <% if (error) { %>
-      <div style="background:#fde8e8; border:1.5px solid #c97d7d; border-radius:8px; padding:0.5rem 0.8rem; margin-bottom:1rem; font-size:0.875rem; color:#7a2020;">❌ <%= error %></div>
+      <div style="background:#fde8e8; border:1.5px solid #c97d7d; border-radius:8px; padding:0.5rem 0.8rem; margin-bottom:1rem; font-size:0.875rem; color:#7a2020;"><%= error %></div>
     <% } %>
     <form action="/trips" method="POST">
       <%- include('../partials/trip-form') %>

@@ -8,17 +8,19 @@ function now() { return new Date().toISOString(); }
 router.use(requireAuth);
 
 router.post('/', (req, res) => {
-  const { type, title, start_time, end_time, location_name, maps_url, link, notes } = req.body;
+  const { type, title, start_time, end_time, end_day_id, location_name, maps_url, link, notes,
+          flight_number, airline, departure_airport, arrival_airport } = req.body;
   const maxOrder = db.prepare('SELECT MAX(sort_order) as m FROM items WHERE day_id = ?').get(req.params.dayId);
   const sortOrder = (maxOrder.m || 0) + 1;
   db.prepare(`
-    INSERT INTO items (day_id, type, title, start_time, end_time, location_name, maps_url, link, notes, sort_order, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO items (day_id, type, title, start_time, end_time, end_day_id, location_name, maps_url, link, notes,
+                       flight_number, airline, departure_airport, arrival_airport, sort_order, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     req.params.dayId, type || 'activity', title,
-    start_time || null, end_time || null,
-    location_name || null, maps_url || null,
-    link || null, notes || null,
+    start_time || null, end_time || null, end_day_id || null,
+    location_name || null, maps_url || null, link || null, notes || null,
+    flight_number || null, airline || null, departure_airport || null, arrival_airport || null,
     sortOrder, now(), now()
   );
   // Find the day to redirect back
@@ -37,15 +39,17 @@ router.post('/reorder', (req, res) => {
 });
 
 router.post('/:itemId', (req, res) => {
-  const { type, title, start_time, end_time, location_name, maps_url, link, notes } = req.body;
+  const { type, title, start_time, end_time, end_day_id, location_name, maps_url, link, notes,
+          flight_number, airline, departure_airport, arrival_airport } = req.body;
   db.prepare(`
-    UPDATE items SET type=?, title=?, start_time=?, end_time=?, location_name=?, maps_url=?, link=?, notes=?, updated_at=?
+    UPDATE items SET type=?, title=?, start_time=?, end_time=?, end_day_id=?, location_name=?, maps_url=?, link=?, notes=?,
+                     flight_number=?, airline=?, departure_airport=?, arrival_airport=?, updated_at=?
     WHERE id=?
   `).run(
     type || 'activity', title,
-    start_time || null, end_time || null,
-    location_name || null, maps_url || null,
-    link || null, notes || null,
+    start_time || null, end_time || null, end_day_id || null,
+    location_name || null, maps_url || null, link || null, notes || null,
+    flight_number || null, airline || null, departure_airport || null, arrival_airport || null,
     now(), req.params.itemId
   );
   const day = db.prepare('SELECT * FROM days WHERE id = ?').get(req.params.dayId);

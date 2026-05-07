@@ -1,117 +1,227 @@
 <%- include('../partials/header', { pageTitle: trip.title }) %>
 
 <!-- Trip header -->
-<div
-  style="
-    position: relative;
-    background-color: <%= trip.cover_color %>;
-    border: 1.5px solid #bfa89e;
-    border-radius: 16px;
-    box-shadow: 0 4px 18px rgba(40, 48, 68, 0.12);
-    padding: 1.6rem;
-    margin-bottom: 2rem;
-    overflow: visible;
-  "
->
-  <!-- subtle tape strips -->
-  <div
-    style="
-      position: absolute;
-      top: -10px;
-      left: 28px;
-      width: 72px;
-      height: 18px;
-      background: rgba(120, 161, 187, 0.4);
-      border-radius: 3px;
-      transform: rotate(-1.5deg);
-    "
-  ></div>
-  <div
-    style="
-      position: absolute;
-      top: -10px;
-      right: 48px;
-      width: 55px;
-      height: 18px;
-      background: rgba(191, 168, 158, 0.45);
-      border-radius: 3px;
-      transform: rotate(1.2deg);
-    "
-  ></div>
+<div style="position:relative; background-color:<%= trip.cover_color %>; border:1.5px solid #BFA89E; border-radius:16px; box-shadow:0 4px 18px rgba(40,48,68,0.12); padding:1.4rem 1.4rem 1.2rem; margin-bottom:1.5rem; overflow:visible;">
+  <!-- tape strips -->
+  <div style="position:absolute; top:-10px; left:28px; width:72px; height:18px; background:rgba(120,161,187,0.4); border-radius:3px; transform:rotate(-1.5deg);"></div>
+  <div style="position:absolute; top:-10px; right:48px; width:55px; height:18px; background:rgba(191,168,158,0.45); border-radius:3px; transform:rotate(1.2deg);"></div>
 
-  <div
-    style="
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem;
-    "
-  >
+  <!-- top row: title + actions -->
+  <div style="display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:0.8rem;">
     <div>
-      <div style="font-size: 3rem; line-height: 1; margin-bottom: 0.4rem">
-        <%= trip.cover_emoji %>
-      </div>
-      <h1
-        style="
-          font-family: 'Pacifico', cursive;
-          font-size: 2.2rem;
-          color: #283044;
-          margin: 0 0 0.3rem;
-          line-height: 1.1;
-        "
-      >
-        <%= trip.title %>
-      </h1>
-      <p
-        style="
-          font-size: 0.95rem;
-          font-weight: 600;
-          color: #283044;
-          opacity: 0.8;
-          margin: 0 0 0.2rem;
-        "
-      >
-        📍 <%= trip.destination %>
-      </p>
-      <p style="font-size: 0.875rem; color: #283044; opacity: 0.65; margin: 0">
-        📅 <%= formatDate(trip.start_date) %> → <%= formatDate(trip.end_date) %>
-      </p>
-      <% if (trip.budget > 0) { %>
-      <p
-        style="
-          font-size: 0.875rem;
-          color: #283044;
-          opacity: 0.65;
-          margin: 0.2rem 0 0;
-        "
-      >
-        💰 Budget: <%= trip.currency %> <%= trip.budget.toLocaleString() %>
-        &nbsp;·&nbsp; Spent: <%= trip.currency %> <%= totalSpent.toFixed(2) %>
-      </p>
-      <% } %>
+      <div style="font-size:2.6rem; line-height:1; margin-bottom:0.3rem;"><%= trip.cover_emoji %></div>
+      <h1 style="font-family:'Pacifico',cursive; font-size:2rem; color:#283044; margin:0 0 0.2rem; line-height:1.1;"><%= trip.title %></h1>
+      <p style="font-size:0.9rem; font-weight:600; color:#283044; opacity:0.8; margin:0 0 0.15rem;"><%= trip.destination %></p>
+      <p style="font-size:0.83rem; color:#283044; opacity:0.6; margin:0;"><%= formatDate(trip.start_date) %> → <%= formatDate(trip.end_date) %></p>
     </div>
-    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap">
-      <a href="/trips/<%= trip.id %>/edit" class="btn-ghost">Edit</a>
-      <a href="/trips/<%= trip.id %>/expenses" class="btn-ghost">Expenses</a>
+    <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+      <a href="/trips/<%= trip.id %>/edit" class="btn-ghost" style="min-height:unset;">Edit</a>
+      <a href="/trips/<%= trip.id %>/expenses" class="btn-ghost" style="min-height:unset;">Expenses</a>
+    </div>
+  </div>
+
+  <!-- info chips row -->
+  <div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:0.9rem;">
+    <% if (trip.budget > 0) { %>
+    <div style="background:rgba(255,255,255,0.6); border:1px solid rgba(40,48,68,0.12); border-radius:8px; padding:0.35rem 0.7rem; font-size:0.8rem; color:#283044;">
+      <span style="opacity:0.6; font-size:0.72rem; display:block; line-height:1; margin-bottom:0.1rem;">Budget</span>
+      <span style="font-weight:600;"><%= trip.currency %> <%= trip.budget.toLocaleString() %></span>
+      <span style="opacity:0.6;"> · spent <%= trip.currency %> <%= totalSpent.toFixed(0) %></span>
+    </div>
+    <% } %>
+    <!-- currency chip — populated by JS -->
+    <div id="fx-chip" style="display:none; background:rgba(255,255,255,0.6); border:1px solid rgba(40,48,68,0.12); border-radius:8px; padding:0.35rem 0.7rem; font-size:0.8rem; color:#283044;">
+      <span style="opacity:0.6; font-size:0.72rem; display:block; line-height:1; margin-bottom:0.1rem;">Exchange Rate</span>
+      <span id="fx-value" style="font-weight:600;"></span>
+    </div>
+    <!-- weather chip — populated by JS -->
+    <div id="weather-chip" style="display:none; background:rgba(255,255,255,0.6); border:1px solid rgba(40,48,68,0.12); border-radius:8px; padding:0.35rem 0.7rem; font-size:0.8rem; color:#283044;">
+      <span style="opacity:0.6; font-size:0.72rem; display:block; line-height:1; margin-bottom:0.1rem;" id="weather-label">Weather</span>
+      <span id="weather-value" style="font-weight:600;"></span>
+    </div>
+    <!-- climate chip — populated by JS -->
+    <div id="climate-chip" style="display:none; background:rgba(255,255,255,0.6); border:1px solid rgba(40,48,68,0.12); border-radius:8px; padding:0.35rem 0.7rem; font-size:0.8rem; color:#283044;">
+      <span style="opacity:0.6; font-size:0.72rem; display:block; line-height:1; margin-bottom:0.1rem;">Trip Climate</span>
+      <span id="climate-value" style="font-weight:600;"></span>
     </div>
   </div>
 
   <% if (trip.notes) { %>
-  <div
-    style="
-      background: rgba(255, 255, 255, 0.55);
-      border-radius: 8px;
-      padding: 0.6rem 0.9rem;
-      margin-top: 1rem;
-      font-size: 0.875rem;
-      color: #283044;
-    "
-  >
-    📝 <%= trip.notes %>
-  </div>
+  <div style="background:rgba(255,255,255,0.55); border-radius:8px; padding:0.55rem 0.85rem; margin-top:0.9rem; font-size:0.85rem; color:#283044;"><%= trip.notes %></div>
   <% } %>
 </div>
+
+<!-- Weather + FX live fetch -->
+<script>
+(function() {
+  const dest = '<%= trip.destination.replace(/'/g, "\\'") %>';
+  const tripCur = '<%= trip.currency %>';
+  const homeCur = '<%= trip.home_currency || "USD" %>';
+  const startDate = '<%= trip.start_date %>';
+  const endDate = '<%= trip.end_date %>';
+  const today = '<%= today %>';
+
+  // ── Currency (Frankfurter) ───────────────────────────────────────
+  if (tripCur !== homeCur) {
+    fetch(`https://api.frankfurter.dev/v1/latest?base=${homeCur}&symbols=${tripCur}`)
+      .then(r => r.json())
+      .then(data => {
+        const rate = data.rates && data.rates[tripCur];
+        if (!rate) return;
+        const chip = document.getElementById('fx-chip');
+        document.getElementById('fx-value').textContent =
+          `1 ${homeCur} = ${rate.toFixed(4)} ${tripCur}`;
+        chip.style.display = 'block';
+      })
+      .catch(() => {});
+  }
+
+  // ── Weather (Open-Meteo geocoding + forecast/climate) ────────────
+  const wmoDesc = {
+    0:'Clear sky', 1:'Mainly clear', 2:'Partly cloudy', 3:'Overcast',
+    45:'Fog', 48:'Icy fog', 51:'Light drizzle', 53:'Drizzle', 55:'Heavy drizzle',
+    61:'Light rain', 63:'Rain', 65:'Heavy rain', 71:'Light snow', 73:'Snow',
+    75:'Heavy snow', 80:'Rain showers', 81:'Showers', 82:'Heavy showers',
+    95:'Thunderstorm', 96:'Thunderstorm + hail', 99:'Severe thunderstorm'
+  };
+  const wmoIcon = {
+    0:'☀️', 1:'🌤️', 2:'⛅', 3:'☁️', 45:'🌫️', 48:'🌫️',
+    51:'🌦️', 53:'🌦️', 55:'🌧️', 61:'🌧️', 63:'🌧️', 65:'🌧️',
+    71:'🌨️', 73:'❄️', 75:'❄️', 80:'🌦️', 81:'🌦️', 82:'⛈️',
+    95:'⛈️', 96:'⛈️', 99:'⛈️'
+  };
+
+  const geoQuery = dest.split(',').reverse().find(s => s.trim().length > 2) || dest;
+  fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(geoQuery.trim())}&count=1&language=en&format=json`)
+    .then(r => r.json())
+    .then(geo => {
+      if (!geo.results || !geo.results.length) return;
+      const { latitude, longitude } = geo.results[0];
+
+      // Always show current weather at destination
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weathercode&temperature_unit=celsius&timezone=auto`)
+        .then(r => r.json())
+        .then(wx => {
+          const temp = Math.round(wx.current.temperature_2m);
+          const code = wx.current.weathercode;
+          document.getElementById('weather-label').textContent = 'Now at ' + dest.split(',')[0];
+          document.getElementById('weather-value').textContent =
+            `${wmoIcon[code] || '🌡️'} ${temp}°C · ${wmoDesc[code] || 'Unknown'}`;
+          document.getElementById('weather-chip').style.display = 'block';
+        }).catch(() => {});
+
+      // Climate — historical avg for the trip month (ERA5 archive)
+      const month = startDate.slice(0, 7); // YYYY-MM
+      const archiveStart = (parseInt(startDate.slice(0,4)) - 1) + startDate.slice(4); // last year same date
+      const archiveEnd   = (parseInt(endDate.slice(0,4)) - 1)   + endDate.slice(4);
+      fetch(`https://archive-api.open-meteo.com/v1/archive?latitude=${latitude}&longitude=${longitude}&start_date=${archiveStart}&end_date=${archiveEnd}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&temperature_unit=celsius&timezone=auto`)
+        .then(r => r.json())
+        .then(arc => {
+          if (!arc.daily || !arc.daily.temperature_2m_max.length) return;
+          const maxTemps = arc.daily.temperature_2m_max.filter(Boolean);
+          const minTemps = arc.daily.temperature_2m_min.filter(Boolean);
+          const precips  = arc.daily.precipitation_sum.filter(Boolean);
+          const avgMax = Math.round(maxTemps.reduce((a,b)=>a+b,0)/maxTemps.length);
+          const avgMin = Math.round(minTemps.reduce((a,b)=>a+b,0)/minTemps.length);
+          const totalRain = precips.reduce((a,b)=>a+b,0).toFixed(0);
+          const rainDays  = precips.filter(p=>p>1).length;
+          document.getElementById('climate-value').textContent =
+            `${avgMin}–${avgMax}°C · ${rainDays}d rain`;
+          document.getElementById('climate-chip').style.display = 'block';
+        }).catch(() => {});
+    })
+    .catch(() => {});
+})();
+</script>
+
+<!-- Overview: Flights / Transport / Accommodation -->
+<%
+  const flightItems    = overviewItems.filter(i => i.type === 'flight');
+  const transportItems = overviewItems.filter(i => i.type === 'transport');
+  const stayItems      = overviewItems.filter(i => i.type === 'accommodation');
+  const hasOverview    = flightItems.length > 0 || transportItems.length > 0 || stayItems.length > 0;
+%>
+<% if (hasOverview) { %>
+<div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1rem; margin-bottom:1.8rem;">
+
+  <!-- Flights -->
+  <% if (flightItems.length > 0) { %>
+  <div style="background:#ffffff; border:1.5px solid #BFA89E; border-radius:12px; box-shadow:0 2px 8px rgba(40,48,68,0.07); padding:1rem; position:relative;">
+    <div style="position:absolute; top:-11px; left:14px; background:#6070c8; color:#fff; font-size:0.72rem; font-weight:600; padding:0.12rem 0.7rem; border-radius:4px; transform:rotate(-1deg); letter-spacing:0.02em;">Flights</div>
+    <div style="display:flex; flex-direction:column; gap:0.65rem; margin-top:0.3rem; max-height:calc(3 * 4.2rem); overflow-y:auto; padding-right:2px;">
+      <% flightItems.forEach(item => { %>
+      <a href="/trips/<%= trip.id %>/days/<%= item.day_id %>#item-<%= item.id %>"
+         style="display:flex; flex-direction:column; gap:0.2rem; text-decoration:none; color:#283044; padding:0.4rem 0.5rem; background:#eef0fb; border-radius:8px;">
+        <div style="display:flex; align-items:center; gap:0.5rem;">
+          <% if (item.departure_airport || item.arrival_airport) { %>
+          <span style="font-size:0.95rem; font-weight:700; letter-spacing:0.02em;">
+            <%= item.departure_airport || '?' %> ✈️ <%= item.arrival_airport || '?' %>
+          </span>
+          <% } else { %>
+          <span style="font-size:0.85rem; font-weight:600;"><%= item.title %></span>
+          <% } %>
+          <% if (item.flight_number) { %>
+          <span style="font-size:0.72rem; background:#fff; border:1px solid #a0a8d8; border-radius:5px; padding:0.05rem 0.4rem; color:#4050a0; font-weight:700; margin-left:auto;"><%= item.flight_number %></span>
+          <% } %>
+        </div>
+        <div style="font-size:0.73rem; color:#8B786D;">
+          <% if (item.airline) { %><%= item.airline %> · <% } %>
+          Day <%= item.day_number %> · <%= formatDate(item.day_date) %><% if (item.start_time) { %> · <%= item.start_time %><% } %>
+        </div>
+      </a>
+      <% }) %>
+    </div>
+  </div>
+  <% } %>
+
+  <!-- Transport -->
+  <% if (transportItems.length > 0) { %>
+  <div style="background:#ffffff; border:1.5px solid #BFA89E; border-radius:12px; box-shadow:0 2px 8px rgba(40,48,68,0.07); padding:1rem; position:relative;">
+    <div style="position:absolute; top:-11px; left:14px; background:#78A1BB; color:#fff; font-size:0.72rem; font-weight:600; padding:0.12rem 0.7rem; border-radius:4px; transform:rotate(-1deg); letter-spacing:0.02em;">Transport</div>
+    <div style="display:flex; flex-direction:column; gap:0.5rem; margin-top:0.3rem; max-height:calc(3 * 3.4rem); overflow-y:auto; padding-right:2px;">
+      <% transportItems.forEach(item => { %>
+      <a href="/trips/<%= trip.id %>/days/<%= item.day_id %>#item-<%= item.id %>"
+         style="display:flex; align-items:center; gap:0.5rem; text-decoration:none; color:#283044;">
+        <span style="font-size:1.1rem; flex-shrink:0;">🚗</span>
+        <div style="flex:1; min-width:0;">
+          <div style="font-size:0.85rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><%= item.title %></div>
+          <div style="font-size:0.73rem; color:#8B786D;">Day <%= item.day_number %> · <%= formatDate(item.day_date) %><% if (item.start_time) { %> · <%= item.start_time %><% } %></div>
+        </div>
+        <% if (item.maps_url) { %>
+        <a href="<%= item.maps_url %>" target="_blank" rel="noopener"
+           style="font-size:0.72rem; color:#78A1BB; text-decoration:none; flex-shrink:0; border:1px solid #78A1BB; border-radius:6px; padding:0.1rem 0.4rem;" onclick="event.stopPropagation()">Map</a>
+        <% } %>
+      </a>
+      <% }) %>
+    </div>
+  </div>
+  <% } %>
+
+  <!-- Accommodation -->
+  <% if (stayItems.length > 0) { %>
+  <div style="background:#ffffff; border:1.5px solid #BFA89E; border-radius:12px; box-shadow:0 2px 8px rgba(40,48,68,0.07); padding:1rem; position:relative;">
+    <div style="position:absolute; top:-11px; left:14px; background:#8B786D; color:#fff; font-size:0.72rem; font-weight:600; padding:0.12rem 0.7rem; border-radius:4px; transform:rotate(-1deg); letter-spacing:0.02em;">Accommodation</div>
+    <div style="display:flex; flex-direction:column; gap:0.5rem; margin-top:0.3rem; max-height:calc(3 * 3.4rem); overflow-y:auto; padding-right:2px;">
+      <% stayItems.forEach(item => { %>
+      <a href="/trips/<%= trip.id %>/days/<%= item.day_id %>#item-<%= item.id %>"
+         style="display:flex; align-items:center; gap:0.5rem; text-decoration:none; color:#283044;">
+        <span style="font-size:1.1rem; flex-shrink:0;">🏨</span>
+        <div style="flex:1; min-width:0;">
+          <div style="font-size:0.85rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><%= item.title %></div>
+          <div style="font-size:0.73rem; color:#8B786D;">Day <%= item.day_number %><% if (item.end_day_id) { const ed = days.find(d=>d.id===item.end_day_id); if(ed){ %> → Day <%= ed.day_number %><% } } %> · <%= formatDate(item.day_date) %><% if (item.location_name) { %> · <%= item.location_name %><% } %></div>
+        </div>
+        <% if (item.maps_url) { %>
+        <a href="<%= item.maps_url %>" target="_blank" rel="noopener"
+           style="font-size:0.72rem; color:#78A1BB; text-decoration:none; flex-shrink:0; border:1px solid #78A1BB; border-radius:6px; padding:0.1rem 0.4rem;" onclick="event.stopPropagation()">Map</a>
+        <% } %>
+      </a>
+      <% }) %>
+    </div>
+  </div>
+  <% } %>
+
+</div>
+<% } %>
 
 <!-- Itinerary section -->
 <div
@@ -136,7 +246,7 @@
   </h2>
   <% if (days.length === 0) { %>
   <form action="/trips/<%= trip.id %>/days/generate" method="POST">
-    <button type="submit" class="btn-primary">✨ Generate Days</button>
+    <button type="submit" class="btn-primary">Generate Days</button>
   </form>
   <% } else { %>
   <form action="/trips/<%= trip.id %>/days/generate" method="POST">
@@ -146,142 +256,197 @@
 </div>
 
 <% if (days.length === 0) { %>
-<div
-  style="
-    background: #ffffff;
-    border: 1.5px solid #bfa89e;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(40, 48, 68, 0.07);
-    padding: 2.5rem;
-    text-align: center;
-  "
->
-  <div style="font-size: 2.8rem; margin-bottom: 0.5rem">📅</div>
-  <p style="font-size: 0.9rem; color: #8b786d">
-    No days yet — generate them from your trip dates!
-  </p>
+<div style="background:#ffffff; border:1.5px solid #BFA89E; border-radius:12px; box-shadow:0 2px 8px rgba(40,48,68,0.07); padding:2.5rem; text-align:center;">
+  <p style="font-size:0.9rem; color:#8B786D;">No days yet — generate them from your trip dates!</p>
 </div>
-<% } else { %> <% const washiColors =
-['#78A1BB','#BFA89E','#8B786D','#5d8aa8','#a08880','#6b87a0','#94837a'] %> <%
-const upcomingDays = days.filter(d => d.date >= today); const pastDays =
-days.filter(d => d.date < today); %>
-<div style="display: flex; flex-direction: column; gap: 1rem">
-  <% days.forEach((day, i) => { const isPast = day.date < today; const isToday =
-  day.date === today; %>
-  <!-- divider before past section -->
-  <% if (i > 0 && isPast && days[i-1].date >= today) { %>
-  <div
-    style="display: flex; align-items: center; gap: 0.75rem; margin: 0.4rem 0"
-  >
-    <div style="flex: 1; height: 1px; background: #bfa89e; opacity: 0.5"></div>
-    <span
-      style="
-        font-size: 0.78rem;
-        font-weight: 600;
-        color: #bfa89e;
-        white-space: nowrap;
-        letter-spacing: 0.04em;
-      "
-      >PAST DAYS</span
-    >
-    <div style="flex: 1; height: 1px; background: #bfa89e; opacity: 0.5"></div>
+<% } else { %>
+  <% const washiColors = ['#78A1BB','#BFA89E','#8B786D','#5d8aa8','#a08880','#6b87a0','#94837a'] %>
+
+  <!-- Upcoming days grid -->
+  <% const upcomingDays = days.filter(d => d.date >= today) %>
+  <% const pastDays = days.filter(d => d.date < today) %>
+
+  <% if (upcomingDays.length > 0) { %>
+  <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1rem; margin-bottom:1.5rem;">
+    <% upcomingDays.forEach(day => {
+      const isToday = day.date === today;
+      const items = itemsByDay[day.id] || [];
+      const preview = items.slice(0, 5);
+      const extra = items.slice(5);
+    %>
+    <div style="background:#ffffff; border:1.5px solid <%= isToday ? '#78A1BB' : '#BFA89E' %>; border-radius:12px; box-shadow:0 2px 10px rgba(40,48,68,0.08); padding:1rem 1rem 0.8rem; position:relative; display:flex; flex-direction:column;">
+      <!-- washi tape label -->
+      <div style="position:absolute; top:-11px; left:14px; background:<%= washiColors[day.day_number % 7] %>; color:#ffffff; font-size:0.72rem; font-weight:600; padding:0.12rem 0.7rem; border-radius:4px; transform:rotate(-1deg); letter-spacing:0.02em; white-space:nowrap;">
+        Day <%= day.day_number %><% if (isToday) { %> · Today<% } %>
+      </div>
+
+      <!-- Date + title -->
+      <div style="margin-top:0.3rem; margin-bottom:0.6rem;">
+        <div style="font-size:0.85rem; font-weight:700; color:#283044;"><%= formatDate(day.date) %></div>
+        <% if (day.title) { %><div style="font-size:0.78rem; color:#8B786D; margin-top:0.1rem;"><%= day.title %></div><% } %>
+      </div>
+
+      <!-- Item list -->
+      <% if (items.length === 0) { %>
+        <p style="font-size:0.78rem; color:#BFA89E; font-style:italic; margin:0; flex:1;">Nothing planned yet.</p>
+      <% } else { %>
+        <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1;">
+          <% preview.forEach(item => {
+               const endDay = item.end_day_id ? days.find(d => d.id === item.end_day_id) : null;
+          %>
+          <a href="/trips/<%= trip.id %>/days/<%= day.id %>#item-<%= item.id %>"
+             style="display:flex; align-items:center; gap:0.4rem; padding:0.25rem 0.4rem; background:#EBF5EE; border-radius:6px; font-size:0.78rem; color:#283044; text-decoration:none; transition:background 0.12s;"
+             onmouseover="this.style.background='#d8ecde'" onmouseout="this.style.background='#EBF5EE'">
+            <span style="flex-shrink:0;"><%= item.type==='food'?'🍽️':item.type==='activity'?'⭐':item.type==='transport'?'🚗':item.type==='accommodation'?'🏨':'📌' %></span>
+            <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><%= item.title %></span>
+            <% if (endDay) { %><span style="font-size:0.68rem; font-weight:700; background:#78A1BB; color:#fff; border-radius:10px; padding:0 0.4rem; flex-shrink:0;">→ D<%= endDay.day_number %></span><% } %>
+            <% if (item.start_time) { %><span style="color:#BFA89E; font-size:0.72rem; flex-shrink:0;"><%= item.start_time %></span><% } %>
+          </a>
+          <% }) %>
+          <% if (extra.length > 0) { %>
+          <button onclick="openDayModal(<%= day.id %>)"
+                  style="margin-top:0.1rem; padding:0.2rem 0.4rem; background:none; border:1px dashed #BFA89E; border-radius:6px; font-size:0.75rem; color:#8B786D; cursor:pointer; text-align:left;">
+            +<%= extra.length %> more — view all
+          </button>
+          <% } %>
+        </div>
+      <% } %>
+
+      <!-- Open Day link -->
+      <a href="/trips/<%= trip.id %>/days/<%= day.id %>"
+         class="btn-primary"
+         style="display:block; text-align:center; font-size:0.78rem; padding:0.3rem 0; margin-top:0.7rem; min-height:unset;">
+        Open Day →
+      </a>
+    </div>
+    <% }) %>
   </div>
   <% } %>
 
-  <div
-    style="background:<%= isPast ? '#f7f5f3' : '#ffffff' %>; border:1.5px solid <%= isToday ? '#78A1BB' : '#BFA89E' %>; border-radius:12px; box-shadow:<%= isPast ? 'none' : '0 2px 8px rgba(40,48,68,0.07)' %>; padding:1rem 1.1rem; position:relative; opacity:<%= isPast ? '0.72' : '1' %>;"
-  >
-    <!-- washi tape label -->
-    <div
-      style="position:absolute; top:-11px; left:14px; background:<%= isPast ? '#BFA89E' : washiColors[day.day_number % 7] %>; color:#ffffff; font-size:0.78rem; font-weight:600; padding:0.15rem 0.8rem; border-radius:4px; transform:rotate(-1deg); letter-spacing:0.02em;"
-    >
-      Day <%= day.day_number %><% if (isToday) { %> · Today<% } %>
-    </div>
-
-    <div
-      style="
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-top: 0.3rem;
-      "
-    >
-      <div>
-        <span
-          style="font-size:0.9rem; font-weight:600; color:<%= isPast ? '#8B786D' : '#283044' %>;"
-          ><%= formatDate(day.date) %></span
-        >
-        <% if (day.title) { %><span
-          style="font-size: 0.875rem; color: #8b786d; margin-left: 0.4rem"
-          >— <%= day.title %></span
-        ><% } %>
-      </div>
-      <a
-        href="/trips/<%= trip.id %>/days/<%= day.id %>"
-        class="<%= isPast ? 'btn-ghost' : 'btn-primary' %>"
-        style="font-size: 0.82rem; padding: 0.3rem 0.75rem"
-        >Open Day →</a
-      >
-    </div>
-
-    <% const items = itemsByDay[day.id] || [] %> <% if (items.length === 0) { %>
-    <p
-      style="
-        font-size: 0.85rem;
-        color: #bfa89e;
-        font-style: italic;
-        margin: 0.5rem 0 0;
-      "
-    >
-      Nothing planned yet — tap Open Day to add!
-    </p>
-    <% } else { %>
-    <div
-      style="display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.6rem"
-    >
-      <% items.slice(0, 4).forEach(item => { %>
-      <span
-        style="display:inline-flex; align-items:center; gap:0.25rem; padding:0.2rem 0.6rem; background:<%= isPast ? '#f0eeec' : '#EBF5EE' %>; border:1px solid #BFA89E; border-radius:20px; font-size:0.8rem; color:<%= isPast ? '#8B786D' : '#283044' %>;"
-      >
-        <%= item.type === 'food' ? '🍽️' : item.type === 'activity' ? '⭐' :
-        item.type === 'transport' ? '🚗' : item.type === 'accommodation' ? '🏨'
-        : '📌' %> <%= item.title.length > 22 ? item.title.substring(0, 22) + '…'
-        : item.title %> <% if (item.start_time) { %><span
-          style="color: #bfa89e; font-size: 0.75rem"
-          ><%= item.start_time %></span
-        ><% } %>
-      </span>
-      <% }) %> <% if (items.length > 4) { %>
-      <span
-        style="
-          display: inline-flex;
-          align-items: center;
-          padding: 0.2rem 0.6rem;
-          background: #f5f3f1;
-          border: 1px solid #bfa89e;
-          border-radius: 20px;
-          font-size: 0.8rem;
-          color: #8b786d;
-        "
-        >+<%= items.length - 4 %> more</span
-      >
-      <% } %>
-    </div>
-    <% } %> <% if (day.notes) { %>
-    <p
-      style="
-        font-size: 0.82rem;
-        color: #8b786d;
-        font-style: italic;
-        margin: 0.4rem 0 0;
-      "
-    >
-      <%= day.notes %>
-    </p>
-    <% } %>
+  <!-- Past days -->
+  <% if (pastDays.length > 0) { %>
+  <div style="display:flex; align-items:center; gap:0.75rem; margin:0.2rem 0 1rem;">
+    <div style="flex:1; height:1px; background:#BFA89E; opacity:0.5;"></div>
+    <span style="font-size:0.75rem; font-weight:600; color:#BFA89E; white-space:nowrap; letter-spacing:0.04em;">PAST DAYS</span>
+    <div style="flex:1; height:1px; background:#BFA89E; opacity:0.5;"></div>
   </div>
-  <% }) %>
+  <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1rem;">
+    <% pastDays.forEach(day => {
+      const items = itemsByDay[day.id] || [];
+      const preview = items.slice(0, 5);
+      const extra = items.slice(5);
+    %>
+    <div style="background:#f7f5f3; border:1.5px solid #BFA89E; border-radius:12px; box-shadow:none; padding:1rem 1rem 0.8rem; position:relative; opacity:0.72; display:flex; flex-direction:column;">
+      <!-- washi tape label -->
+      <div style="position:absolute; top:-11px; left:14px; background:#BFA89E; color:#ffffff; font-size:0.72rem; font-weight:600; padding:0.12rem 0.7rem; border-radius:4px; transform:rotate(-1deg); letter-spacing:0.02em;">
+        Day <%= day.day_number %>
+      </div>
+
+      <div style="margin-top:0.3rem; margin-bottom:0.6rem;">
+        <div style="font-size:0.85rem; font-weight:700; color:#8B786D;"><%= formatDate(day.date) %></div>
+        <% if (day.title) { %><div style="font-size:0.78rem; color:#8B786D; margin-top:0.1rem;"><%= day.title %></div><% } %>
+      </div>
+
+      <% if (items.length === 0) { %>
+        <p style="font-size:0.78rem; color:#BFA89E; font-style:italic; margin:0; flex:1;">Nothing was planned.</p>
+      <% } else { %>
+        <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1;">
+          <% preview.forEach(item => {
+               const endDay = item.end_day_id ? days.find(d => d.id === item.end_day_id) : null;
+          %>
+          <a href="/trips/<%= trip.id %>/days/<%= day.id %>#item-<%= item.id %>"
+             style="display:flex; align-items:center; gap:0.4rem; padding:0.25rem 0.4rem; background:#f0eeec; border-radius:6px; font-size:0.78rem; color:#8B786D; text-decoration:none;">
+            <span style="flex-shrink:0;"><%= item.type==='food'?'🍽️':item.type==='activity'?'⭐':item.type==='transport'?'🚗':item.type==='accommodation'?'🏨':'📌' %></span>
+            <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><%= item.title %></span>
+            <% if (endDay) { %><span style="font-size:0.68rem; font-weight:700; background:#BFA89E; color:#fff; border-radius:10px; padding:0 0.4rem; flex-shrink:0;">→ D<%= endDay.day_number %></span><% } %>
+            <% if (item.start_time) { %><span style="color:#BFA89E; font-size:0.72rem; flex-shrink:0;"><%= item.start_time %></span><% } %>
+          </a>
+          <% }) %>
+          <% if (extra.length > 0) { %>
+          <button onclick="openDayModal(<%= day.id %>)"
+                  style="margin-top:0.1rem; padding:0.2rem 0.4rem; background:none; border:1px dashed #BFA89E; border-radius:6px; font-size:0.75rem; color:#8B786D; cursor:pointer; text-align:left;">
+            +<%= extra.length %> more — view all
+          </button>
+          <% } %>
+        </div>
+      <% } %>
+
+      <a href="/trips/<%= trip.id %>/days/<%= day.id %>"
+         class="btn-ghost"
+         style="display:block; text-align:center; font-size:0.78rem; padding:0.3rem 0; margin-top:0.7rem; min-height:unset;">
+        Open Day →
+      </a>
+    </div>
+    <% }) %>
+  </div>
+  <% } %>
+<% } %>
+
+<!-- Day items modal -->
+<div id="day-modal-backdrop" onclick="closeDayModal()" style="display:none; position:fixed; inset:0; background:rgba(40,48,68,0.45); z-index:100; align-items:center; justify-content:center;">
+  <div onclick="event.stopPropagation()" style="background:#ffffff; border:1.5px solid #BFA89E; border-radius:16px; box-shadow:0 8px 32px rgba(40,48,68,0.18); padding:1.5rem; width:min(480px,92vw); max-height:80vh; overflow-y:auto; position:relative;">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
+      <h3 id="modal-title" style="font-family:'Pacifico',cursive; font-size:1.3rem; color:#283044; margin:0;"></h3>
+      <button onclick="closeDayModal()" style="background:none; border:none; font-size:1.4rem; color:#8B786D; cursor:pointer; line-height:1;">×</button>
+    </div>
+    <div id="modal-items" style="display:flex; flex-direction:column; gap:0.4rem;"></div>
+    <a id="modal-open-day" href="#" class="btn-primary" style="display:block; text-align:center; margin-top:1.1rem;">Open Day →</a>
+  </div>
 </div>
-<% } %> <%- include('../partials/footer') %>
+
+<script>
+  const dayNumById = <%- JSON.stringify(
+    days.reduce((acc, d) => { acc[d.id] = d.day_number; return acc; }, {})
+  ) %>;
+
+  const allItems = <%- JSON.stringify(
+    days.reduce((acc, day) => {
+      acc[day.id] = {
+        dayNum: day.day_number,
+        date: day.date,
+        title: day.title || '',
+        items: (itemsByDay[day.id] || []).map(it => ({
+          id: it.id,
+          title: it.title,
+          type: it.type,
+          start_time: it.start_time || '',
+          end_day_id: it.end_day_id || null
+        }))
+      };
+      return acc;
+    }, {})
+  ) %>;
+
+  const typeIcon = { food:'🍽️', activity:'⭐', transport:'🚗', accommodation:'🏨', other:'📌' };
+
+  function openDayModal(dayId) {
+    const d = allItems[dayId];
+    if (!d) return;
+    document.getElementById('modal-title').textContent = 'Day ' + d.dayNum + (d.title ? ' — ' + d.title : '');
+    const container = document.getElementById('modal-items');
+    container.innerHTML = d.items.map(item => {
+      const endBadge = item.end_day_id && dayNumById[item.end_day_id]
+        ? `<span style="font-size:0.7rem;font-weight:700;background:#78A1BB;color:#fff;border-radius:10px;padding:0 0.4rem;flex-shrink:0;">→ D${dayNumById[item.end_day_id]}</span>`
+        : '';
+      const timeBadge = item.start_time
+        ? `<span style="color:#BFA89E;font-size:0.78rem;flex-shrink:0;">${item.start_time}</span>`
+        : '';
+      return `<a href="/trips/<%= trip.id %>/days/${dayId}#item-${item.id}"
+          style="display:flex;align-items:center;gap:0.5rem;padding:0.35rem 0.5rem;background:#EBF5EE;border-radius:8px;font-size:0.85rem;color:#283044;text-decoration:none;">
+        <span style="flex-shrink:0;">${typeIcon[item.type] || '📌'}</span>
+        <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${item.title}</span>
+        ${endBadge}${timeBadge}
+      </a>`;
+    }).join('');
+    document.getElementById('modal-open-day').href = '/trips/<%= trip.id %>/days/' + dayId;
+    document.getElementById('day-modal-backdrop').style.display = 'flex';
+  }
+
+  function closeDayModal() {
+    document.getElementById('day-modal-backdrop').style.display = 'none';
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDayModal(); });
+</script>
+
+<%- include('../partials/footer') %>

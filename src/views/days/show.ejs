@@ -84,7 +84,7 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
       <p
         style="font-size: 0.95rem; font-weight: 600; color: #283044; margin: 0"
       >
-        📅 <%= formatDate(day.date) %>
+        <%= formatDate(day.date) %>
       </p>
       <% if (day.title) { %>
       <h1
@@ -206,7 +206,7 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
       margin: 0 0 0.9rem;
     "
   >
-    New Item ✨
+    New Item
   </h3>
   <form action="/days/<%= day.id %>/items" method="POST">
     <div style="margin-bottom: 0.8rem">
@@ -225,7 +225,7 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
         id="type-selector"
       >
         <%
-        [['food','🍽️','Food'],['activity','⭐','Activity'],['transport','🚗','Transport'],['accommodation','🏨','Stay'],['other','📌','Other']].forEach(([val,
+        [['food','🍽️','Food'],['activity','⭐','Activity'],['transport','🚗','Transport'],['flight','✈️','Flight'],['accommodation','🏨','Stay'],['other','📌','Other']].forEach(([val,
         icon, label]) => { %>
         <label style="cursor: pointer">
           <input type="radio" name="type" value="<%= val %>"
@@ -301,6 +301,38 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
         >
         <input type="time" name="end_time" class="input-field" />
       </div>
+      <% if (days.length > 1) { %>
+      <div style="grid-column:1/-1;">
+        <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.3rem;">Ends on day <span style="font-weight:400; color:#8B786D;">(optional — for multi-day items)</span></label>
+        <select name="end_day_id" class="input-field">
+          <option value="">— same day —</option>
+          <% days.filter(d => d.id !== day.id).forEach(d => { %>
+            <option value="<%= d.id %>">Day <%= d.day_number %><% if (d.title) { %> – <%= d.title %><% } %> (<%= formatDate(d.date) %>)</option>
+          <% }) %>
+        </select>
+      </div>
+      <% } %>
+      <!-- Flight fields (shown only when type=flight) -->
+      <div id="new-flight-fields" style="display:none;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.3rem;">Flight No.</label>
+            <input type="text" name="flight_number" class="input-field" placeholder="e.g. SQ321" />
+          </div>
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.3rem;">Airline</label>
+            <input type="text" name="airline" class="input-field" placeholder="e.g. Singapore Airlines" />
+          </div>
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.3rem;">From (airport)</label>
+            <input type="text" name="departure_airport" class="input-field" placeholder="e.g. SIN" />
+          </div>
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.3rem;">To (airport)</label>
+            <input type="text" name="arrival_airport" class="input-field" placeholder="e.g. AKL" />
+          </div>
+        </div>
+      </div>
       <div style="grid-column: 1/-1">
         <label
           style="
@@ -326,7 +358,7 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
             class="btn-ghost"
             style="white-space: nowrap; font-size: 0.82rem"
           >
-            📍 Build
+            Build link
           </button>
         </div>
       </div>
@@ -415,12 +447,12 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
 
 <div id="sortable-items">
   <% const typeBg = { food:'#fdf6ee', activity:'#eef4fb', transport:'#f4f0fb',
-  accommodation:'#eef7f2', other:'#f7f5f3' } %> <% const typeAccent = {
-  food:'#f0c080', activity:'#78A1BB', transport:'#a090c8',
-  accommodation:'#78b896', other:'#BFA89E' } %> <% const typeIcons = {
-  food:'🍽️', activity:'⭐', transport:'🚗', accommodation:'🏨', other:'📌' } %>
+  flight:'#eef0fb', accommodation:'#eef7f2', other:'#f7f5f3' } %>
+  <% const typeAccent = { food:'#f0c080', activity:'#78A1BB', transport:'#a090c8',
+  flight:'#6070c8', accommodation:'#78b896', other:'#BFA89E' } %>
+  <% const typeIcons = { food:'🍽️', activity:'⭐', transport:'🚗', flight:'✈️', accommodation:'🏨', other:'📌' } %>
   <% items.forEach((item, idx) => { %>
-  <div class="item-card" data-id="<%= item.id %>" style="margin-bottom: 0.2rem">
+  <div id="item-<%= item.id %>" class="item-card" data-id="<%= item.id %>" style="margin-bottom: 0.2rem">
     <div
       style="
         background: <%= typeBg[item.type] || '#f7f5f3' %>;
@@ -537,6 +569,11 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
               "
               ><%= item.type %></span
             >
+            <% if (item.end_day_id) {
+                 const endDay = days.find(d => d.id === item.end_day_id);
+                 if (endDay) { %>
+            <span style="font-size:0.75rem; font-weight:600; padding:0.1rem 0.55rem; background:#78A1BB; color:#fff; border-radius:20px; white-space:nowrap;">→ Day <%= endDay.day_number %></span>
+            <% } } %>
           </div>
           <% if (item.location_name) { %>
           <p
@@ -565,7 +602,23 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
             >
             <% } %>
           </p>
-          <% } %> <% if (item.notes) { %>
+          <% } %>
+          <% if (item.type === 'flight' && (item.departure_airport || item.arrival_airport || item.flight_number)) { %>
+          <div style="margin-top:0.4rem; display:flex; align-items:center; flex-wrap:wrap; gap:0.4rem;">
+            <% if (item.departure_airport || item.arrival_airport) { %>
+            <span style="font-size:0.92rem; font-weight:700; color:#283044; letter-spacing:0.03em;">
+              <%= item.departure_airport || '?' %> ✈️ <%= item.arrival_airport || '?' %>
+            </span>
+            <% } %>
+            <% if (item.flight_number) { %>
+            <span style="font-size:0.78rem; background:#eef0fb; border:1px solid #a0a8d8; border-radius:6px; padding:0.1rem 0.5rem; color:#4050a0; font-weight:600;"><%= item.flight_number %></span>
+            <% } %>
+            <% if (item.airline) { %>
+            <span style="font-size:0.78rem; color:#8B786D;"><%= item.airline %></span>
+            <% } %>
+          </div>
+          <% } %>
+          <% if (item.notes) { %>
           <p
             style="
               font-size: 0.85rem;
@@ -610,15 +663,17 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
             onclick="toggleEditItem(<%= item.id %>)"
             title="Edit"
             style="
-              padding: 0.3rem 0.45rem;
+              padding: 0.25rem 0.5rem;
               background: #ebf5ee;
               border: 1px solid #bfa89e;
               border-radius: 6px;
               cursor: pointer;
-              font-size: 0.9rem;
+              font-size: 0.75rem;
+              font-weight: 600;
+              color: #283044;
             "
           >
-            ✏️
+            Edit
           </button>
           <form
             action="/days/<%= day.id %>/items/<%= item.id %>/delete"
@@ -665,7 +720,7 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
             id="type-selector-<%= item.id %>"
           >
             <%
-            [['food','🍽️','Food'],['activity','⭐','Activity'],['transport','🚗','Transport'],['accommodation','🏨','Stay'],['other','📌','Other']].forEach(([val,
+            [['food','🍽️','Food'],['activity','⭐','Activity'],['transport','🚗','Transport'],['flight','✈️','Flight'],['accommodation','🏨','Stay'],['other','📌','Other']].forEach(([val,
             icon, lbl]) => { %>
             <label style="cursor: pointer">
               <input type="radio" name="type" value="<%= val %>"
@@ -709,6 +764,36 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
                 value="<%= item.end_time || '' %>"
               />
             </div>
+            <% if (days.length > 1) { %>
+            <div style="grid-column:1/-1;">
+              <label style="display:block; font-size:0.78rem; font-weight:600; color:#283044; margin-bottom:0.25rem;">Ends on day <span style="font-weight:400; color:#8B786D;">(optional)</span></label>
+              <select name="end_day_id" class="input-field">
+                <option value="">— same day —</option>
+                <% days.filter(d => d.id !== day.id).forEach(d => { %>
+                  <option value="<%= d.id %>" <%= item.end_day_id === d.id ? 'selected' : '' %>>Day <%= d.day_number %><% if (d.title) { %> – <%= d.title %><% } %> (<%= formatDate(d.date) %>)</option>
+                <% }) %>
+              </select>
+            </div>
+            <% } %>
+            <!-- Flight fields (shown only when type=flight) -->
+            <div id="edit-flight-fields-<%= item.id %>" style="display:<%= item.type==='flight' ? 'grid' : 'none' %>; grid-column:1/-1; grid-template-columns:1fr 1fr; gap:0.5rem;">
+              <div>
+                <label style="display:block; font-size:0.78rem; font-weight:600; color:#283044; margin-bottom:0.25rem;">Flight No.</label>
+                <input type="text" name="flight_number" class="input-field" placeholder="e.g. SQ321" value="<%= item.flight_number || '' %>" />
+              </div>
+              <div>
+                <label style="display:block; font-size:0.78rem; font-weight:600; color:#283044; margin-bottom:0.25rem;">Airline</label>
+                <input type="text" name="airline" class="input-field" placeholder="e.g. Singapore Airlines" value="<%= item.airline || '' %>" />
+              </div>
+              <div>
+                <label style="display:block; font-size:0.78rem; font-weight:600; color:#283044; margin-bottom:0.25rem;">From (airport)</label>
+                <input type="text" name="departure_airport" class="input-field" placeholder="e.g. SIN" value="<%= item.departure_airport || '' %>" />
+              </div>
+              <div>
+                <label style="display:block; font-size:0.78rem; font-weight:600; color:#283044; margin-bottom:0.25rem;">To (airport)</label>
+                <input type="text" name="arrival_airport" class="input-field" placeholder="e.g. AKL" value="<%= item.arrival_airport || '' %>" />
+              </div>
+            </div>
             <div style="grid-column: 1/-1">
               <div style="display: flex; gap: 0.4rem">
                 <input
@@ -725,7 +810,7 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
                   class="btn-ghost"
                   style="font-size: 0.8rem; white-space: nowrap"
                 >
-                  📍 Build
+                  Build link
                 </button>
               </div>
             </div>
@@ -865,15 +950,29 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
     card.addEventListener("mouseleave", () => (actions.style.opacity = "0"));
   });
 
+  function getFlightFields(container) {
+    // for add form: #new-flight-fields; for edit form: #edit-flight-fields-{id}
+    const ts = container.closest('form') || container.parentElement;
+    return ts ? ts.querySelector('[id^="new-flight-fields"],[id^="edit-flight-fields"]') : null;
+  }
+
+  function toggleFlightFields(container, type) {
+    const ff = getFlightFields(container);
+    if (!ff) return;
+    ff.style.display = type === 'flight' ? 'grid' : 'none';
+  }
+
   function initTypeSelector(container) {
     container.querySelectorAll(".type-btn").forEach((btn) => {
       const radio = btn.previousElementSibling;
-      if (radio.checked) applySelected(btn);
-      btn.addEventListener("click", () => {
-        container
-          .querySelectorAll(".type-btn")
-          .forEach((b) => applyUnselected(b));
+      if (radio.checked) {
         applySelected(btn);
+        toggleFlightFields(container, radio.value);
+      }
+      btn.addEventListener("click", () => {
+        container.querySelectorAll(".type-btn").forEach((b) => applyUnselected(b));
+        applySelected(btn);
+        toggleFlightFields(container, radio.value);
       });
     });
   }
@@ -918,6 +1017,23 @@ const wc = washiColors[(day.day_number - 1) % 7] %>
       },
     });
   }
+
+  // Highlight item targeted by URL hash
+  function highlightHash() {
+    const hash = window.location.hash;
+    if (!hash || !hash.startsWith('#item-')) return;
+    const el = document.querySelector(hash);
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const card = el.querySelector('[style*="background:"]') || el.firstElementChild;
+    const inner = el.children[0];
+    if (inner) {
+      inner.style.outline = '2.5px solid #78A1BB';
+      inner.style.outlineOffset = '2px';
+      setTimeout(() => { inner.style.outline = ''; inner.style.outlineOffset = ''; }, 2000);
+    }
+  }
+  window.addEventListener('load', highlightHash);
 </script>
 
 <%- include('../partials/footer') %>

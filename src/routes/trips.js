@@ -17,15 +17,15 @@ router.get('/new', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const { title, destination, start_date, end_date, cover_emoji, cover_color, budget, currency, notes } = req.body;
+  const { title, destination, start_date, end_date, cover_emoji, cover_color, budget, currency, home_currency, notes } = req.body;
   const stmt = db.prepare(`
-    INSERT INTO trips (title, destination, start_date, end_date, cover_emoji, cover_color, budget, currency, notes, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO trips (title, destination, start_date, end_date, cover_emoji, cover_color, budget, currency, home_currency, notes, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
   const result = stmt.run(
     title, destination, start_date, end_date,
     cover_emoji || '✈️', cover_color || '#fde68a',
-    parseFloat(budget) || 0, currency || 'USD', notes || '',
+    parseFloat(budget) || 0, currency || 'USD', home_currency || 'USD', notes || '',
     now(), now()
   );
   req.flash('success', 'Trip created!');
@@ -47,10 +47,17 @@ router.get('/:id', (req, res) => {
   allDays.forEach(day => {
     itemsByDay[day.id] = db.prepare('SELECT * FROM items WHERE day_id = ? ORDER BY sort_order, start_time').all(day.id);
   });
+  // Flat list for overview section, joined with day info
+  const overviewItems = db.prepare(`
+    SELECT i.*, d.day_number, d.date as day_date
+    FROM items i JOIN days d ON i.day_id = d.id
+    WHERE d.trip_id = ?
+    ORDER BY d.day_number, i.sort_order, i.start_time
+  `).all(trip.id);
   const expenseSummary = db.prepare(`
     SELECT SUM(amount) as total FROM expenses WHERE trip_id = ?
   `).get(trip.id);
-  res.render('trips/show', { trip, days, itemsByDay, totalSpent: expenseSummary.total || 0, today, messages: req.flash('success') });
+  res.render('trips/show', { trip, days, itemsByDay, overviewItems, totalSpent: expenseSummary.total || 0, today, messages: req.flash('success') });
 });
 
 router.get('/:id/edit', (req, res) => {
@@ -60,12 +67,12 @@ router.get('/:id/edit', (req, res) => {
 });
 
 router.post('/:id', (req, res) => {
-  const { title, destination, start_date, end_date, cover_emoji, cover_color, budget, currency, notes } = req.body;
+  const { title, destination, start_date, end_date, cover_emoji, cover_color, budget, currency, home_currency, notes } = req.body;
   db.prepare(`
-    UPDATE trips SET title=?, destination=?, start_date=?, end_date=?, cover_emoji=?, cover_color=?, budget=?, currency=?, notes=?, updated_at=?
+    UPDATE trips SET title=?, destination=?, start_date=?, end_date=?, cover_emoji=?, cover_color=?, budget=?, currency=?, home_currency=?, notes=?, updated_at=?
     WHERE id=?
   `).run(title, destination, start_date, end_date, cover_emoji || '✈️', cover_color || '#fde68a',
-    parseFloat(budget) || 0, currency || 'USD', notes || '', now(), req.params.id);
+    parseFloat(budget) || 0, currency || 'USD', home_currency || 'USD', notes || '', now(), req.params.id);
   req.flash('success', 'Trip updated!');
   res.redirect(`/trips/${req.params.id}`);
 });

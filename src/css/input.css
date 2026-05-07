@@ -129,4 +129,24 @@
 
   /* ── Font helpers ───────────────────────── */
   .font-display { font-family: 'Pacifico', cursive !important; }
+
+  /* ── Mobile touch targets ───────────────── */
+  .btn-primary, .btn-ghost, .btn-danger {
+    min-height: 44px;
+  }
+  .input-field {
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 600px) {
+  main {
+    padding: 1rem 0.85rem !important;
+  }
+  nav > div {
+    padding-left: 0.85rem !important;
+    padding-right: 0.85rem !important;
+  }
+  h1 { font-size: 1.7rem !important; }
+  h2 { font-size: 1.4rem !important; }
 }

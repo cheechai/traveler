@@ -2,22 +2,21 @@
 
 <div style="display:flex; align-items:center; gap:0.8rem; margin-bottom:1.5rem; flex-wrap:wrap;">
   <a href="/trips/<%= trip.id %>" class="btn-ghost">← Back to Trip</a>
-  <h1 style="font-family:'Pacifico',cursive; font-size:2.2rem; color:#283044; margin:0;">💸 Expenses</h1>
+  <h1 style="font-family:'Pacifico',cursive; font-size:2.2rem; color:#283044; margin:0;">Expenses</h1>
   <span style="font-size:0.9rem; color:#8B786D;">for <%= trip.title %></span>
 </div>
 
 <!-- Summary cards -->
 <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:1rem; margin-bottom:1.8rem;">
   <% const summaryCards = [
-    { emoji:'💰', label:'Budget',  val: trip.budget > 0 ? trip.currency + ' ' + trip.budget.toLocaleString() : '—', bg:'#eef4fb', rot:'-1.2deg' },
-    { emoji:'🧾', label:'Spent',   val: trip.currency + ' ' + (summary.total || 0).toFixed(2), bg:'#fdf6ee', rot:'1deg' },
-    { emoji:'📊', label:'Left',    val: trip.currency + ' ' + (trip.budget - (summary.total||0)).toFixed(2), bg: (trip.budget - (summary.total||0)) >= 0 ? '#eef7f2' : '#fff5f5', rot:'-0.7deg' },
-    { emoji:'🤝', label:'Shared',  val: trip.currency + ' ' + (summary.paid_shared||0).toFixed(2), bg:'#f4f0fb', rot:'1.3deg' },
+    { label:'Budget',  val: trip.budget > 0 ? trip.currency + ' ' + trip.budget.toLocaleString() : '—', bg:'#eef4fb', rot:'-1.2deg' },
+    { label:'Spent',   val: trip.currency + ' ' + (summary.total || 0).toFixed(2), bg:'#fdf6ee', rot:'1deg' },
+    { label:'Left',    val: trip.currency + ' ' + (trip.budget - (summary.total||0)).toFixed(2), bg: (trip.budget - (summary.total||0)) >= 0 ? '#eef7f2' : '#fff5f5', rot:'-0.7deg' },
+    { label:'Shared',  val: trip.currency + ' ' + (summary.paid_shared||0).toFixed(2), bg:'#f4f0fb', rot:'1.3deg' },
   ] %>
   <% summaryCards.forEach(sc => { %>
     <div style="background:<%= sc.bg %>; border:1.5px solid #BFA89E; border-radius:12px; box-shadow:0 2px 8px rgba(40,48,68,0.08); padding:1rem; text-align:center; transform:rotate(<%= sc.rot %>); position:relative;">
       <div style="position:absolute; top:-9px; left:50%; transform:translateX(-50%); width:45px; height:15px; background:rgba(120,161,187,0.35); border-radius:3px;"></div>
-      <div style="font-size:1.8rem; margin-bottom:0.3rem;"><%= sc.emoji %></div>
       <div style="font-size:0.78rem; color:#8B786D; margin-bottom:0.2rem;"><%= sc.label %></div>
       <div style="font-family:'Pacifico',cursive; font-size:1.1rem; color:#283044; line-height:1.2;"><%= sc.val %></div>
     </div>
@@ -70,7 +69,7 @@
 <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; flex-wrap:wrap; gap:0.6rem;">
   <h2 style="font-family:'Pacifico',cursive; font-size:1.6rem; color:#283044; margin:0;">All Expenses</h2>
   <div style="display:flex; gap:0.5rem;">
-    <a href="/trips/<%= trip.id %>/expenses/export" class="btn-ghost">⬇️ CSV</a>
+    <a href="/trips/<%= trip.id %>/expenses/export" class="btn-ghost">Export CSV</a>
     <button onclick="toggleAddExpense()" class="btn-primary">+ Add Expense</button>
   </div>
 </div>
@@ -78,7 +77,7 @@
 <!-- Add expense form -->
 <div id="add-expense-form" style="display:none; background:#ffffff; border:1.5px solid #78A1BB; border-radius:12px; box-shadow:0 4px 14px rgba(40,48,68,0.1); padding:1.2rem; margin-bottom:1.5rem; position:relative;">
   <div style="position:absolute; top:-10px; left:50%; transform:translateX(-50%) rotate(1deg); width:60px; height:17px; background:rgba(120,161,187,0.4); border-radius:3px;"></div>
-  <h3 style="font-family:'Pacifico',cursive; font-size:1.2rem; color:#283044; margin:0 0 0.9rem;">Add Expense 💰</h3>
+  <h3 style="font-family:'Pacifico',cursive; font-size:1.2rem; color:#283044; margin:0 0 0.9rem;">Add Expense</h3>
   <form action="/trips/<%= trip.id %>/expenses" method="POST">
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem;">
       <div style="grid-column:1/-1;">
@@ -92,7 +91,7 @@
       <div>
         <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.3rem;">Currency</label>
         <select name="currency" class="input-field">
-          <% ['USD','EUR','GBP','JPY','SGD','MYR','AUD','THB','KRW','HKD'].forEach(c => { %>
+          <% ['USD','EUR','GBP','JPY','SGD','MYR','AUD','NZD','THB','KRW','HKD'].forEach(c => { %>
             <option value="<%= c %>" <%= trip.currency === c ? 'selected' : '' %>><%= c %></option>
           <% }) %>
         </select>
@@ -124,7 +123,7 @@
       </div>
     </div>
     <div style="display:flex; gap:0.5rem; margin-top:0.9rem;">
-      <button type="submit" class="btn-primary">Add ✅</button>
+      <button type="submit" class="btn-primary">Add</button>
       <button type="button" onclick="toggleAddExpense()" class="btn-ghost">Cancel</button>
     </div>
   </form>
@@ -133,7 +132,6 @@
 <!-- Expense list -->
 <% if (expenses.length === 0) { %>
   <div style="background:#ffffff; border:1.5px solid #BFA89E; border-radius:12px; padding:2rem; text-align:center;">
-    <div style="font-size:2.5rem; margin-bottom:0.4rem;">🧾</div>
     <p style="font-size:0.9rem; color:#8B786D;">No expenses yet — add your first!</p>
   </div>
 <% } else { %>
@@ -162,7 +160,7 @@
             </div>
           </div>
           <div style="display:flex; flex-direction:column; gap:0.25rem; flex-shrink:0;">
-            <button onclick="toggleEditExpense(<%= exp.id %>)" style="padding:0.25rem 0.4rem; background:#EBF5EE; border:1px solid #BFA89E; border-radius:6px; cursor:pointer; font-size:0.85rem;">✏️</button>
+            <button onclick="toggleEditExpense(<%= exp.id %>)" style="padding:0.25rem 0.5rem; background:#EBF5EE; border:1px solid #BFA89E; border-radius:6px; cursor:pointer; font-size:0.75rem; color:#283044; font-weight:600;">Edit</button>
             <form action="/trips/<%= trip.id %>/expenses/<%= exp.id %>/delete" method="POST" onsubmit="return confirm('Delete this expense?')" style="display:inline;">
               <button type="submit" style="padding:0.25rem 0.4rem; background:#fff5f5; border:1px solid #e8b4b4; border-radius:6px; cursor:pointer; font-size:0.85rem;">🗑️</button>
             </form>
@@ -176,7 +174,7 @@
             <div><input type="number" name="amount" class="input-field" value="<%= exp.amount %>" step="0.01" required /></div>
             <div>
               <select name="currency" class="input-field">
-                <% ['USD','EUR','GBP','JPY','SGD','MYR','AUD','THB','KRW','HKD'].forEach(c => { %>
+                <% ['USD','EUR','GBP','JPY','SGD','MYR','AUD','NZD','THB','KRW','HKD'].forEach(c => { %>
                   <option value="<%= c %>" <%= exp.currency===c?'selected':'' %>><%= c %></option>
                 <% }) %>
               </select>

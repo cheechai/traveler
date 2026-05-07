@@ -34,6 +34,7 @@ function migrate() {
       title TEXT NOT NULL,
       start_time TEXT,
       end_time TEXT,
+      end_day_id INTEGER REFERENCES days(id) ON DELETE SET NULL,
       location_name TEXT,
       maps_url TEXT,
       link TEXT,
@@ -68,6 +69,26 @@ function migrate() {
       updated_at TEXT NOT NULL
     );
   `);
+  // add end_day_id to items if it doesn't exist yet
+  const itemCols = db.prepare("PRAGMA table_info(items)").all().map(c => c.name);
+  if (!itemCols.includes('end_day_id')) {
+    db.exec("ALTER TABLE items ADD COLUMN end_day_id INTEGER REFERENCES days(id) ON DELETE SET NULL");
+  }
+
+  // add home_currency to trips if it doesn't exist yet
+  const tripCols = db.prepare("PRAGMA table_info(trips)").all().map(c => c.name);
+  if (!tripCols.includes('home_currency')) {
+    db.exec("ALTER TABLE trips ADD COLUMN home_currency TEXT NOT NULL DEFAULT 'USD'");
+  }
+
+  // add flight fields to items if they don't exist yet
+  const itemCols2 = db.prepare("PRAGMA table_info(items)").all().map(c => c.name);
+  const flightCols = { flight_number: 'TEXT', airline: 'TEXT', departure_airport: 'TEXT', arrival_airport: 'TEXT' };
+  for (const [col, type] of Object.entries(flightCols)) {
+    if (!itemCols2.includes(col)) {
+      db.exec(`ALTER TABLE items ADD COLUMN ${col} ${type}`);
+    }
+  }
 }
 
 module.exports = migrate;

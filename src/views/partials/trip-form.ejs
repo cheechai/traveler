@@ -20,10 +20,18 @@
     <input type="number" name="budget" class="input-field" placeholder="0" step="0.01" min="0" value="<%= typeof trip !== 'undefined' ? trip.budget : '' %>" />
   </div>
   <div>
-    <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.35rem;">Currency</label>
+    <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.35rem;">Trip Currency</label>
     <select name="currency" class="input-field">
-      <% ['USD','EUR','GBP','JPY','SGD','MYR','AUD','THB','KRW','HKD'].forEach(c => { %>
+      <% ['USD','EUR','GBP','JPY','SGD','MYR','AUD','NZD','THB','KRW','HKD','IDR','VND','PHP','TWD','CNY'].forEach(c => { %>
         <option value="<%= c %>" <%= (typeof trip !== 'undefined' && trip.currency === c) ? 'selected' : '' %>><%= c %></option>
+      <% }) %>
+    </select>
+  </div>
+  <div>
+    <label style="display:block; font-size:0.82rem; font-weight:600; color:#283044; margin-bottom:0.35rem;">Home Currency</label>
+    <select name="home_currency" class="input-field">
+      <% ['USD','EUR','GBP','JPY','SGD','MYR','AUD','NZD','THB','KRW','HKD','IDR','VND','PHP','TWD','CNY'].forEach(c => { %>
+        <option value="<%= c %>" <%= (typeof trip !== 'undefined' && trip.home_currency === c) ? 'selected' : (typeof trip === 'undefined' && c === 'MYR') ? 'selected' : '' %>><%= c %></option>
       <% }) %>
     </select>
   </div>
